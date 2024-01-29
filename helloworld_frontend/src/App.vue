@@ -1,4 +1,11 @@
 <script setup lang="ts">
+  import Toast from '@/components/Toast.vue';
+
+  // export default {
+  //   components: {
+  //     Toast
+  //   }
+  // }
 </script>
 
 <template>
@@ -60,6 +67,8 @@
   <main class="px-8 py-6 bg-gray-100">
     <RouterView />
   </main>
+
+  <Toast />
 </template>
 
 <style scoped>

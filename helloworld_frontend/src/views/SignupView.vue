@@ -1,3 +1,73 @@
+<script lang="ts">
+import axios from 'axios'
+
+import { useToastStore } from '@/stores/toast'
+
+export default {
+    setup() {
+        const toastStore = useToastStore()
+
+        return {
+            toastStore
+        }
+    },
+
+    data() {
+        return {
+            form: {
+                email: '',
+                name: '',
+                password1: '',
+                password2: ''
+            },
+            errors: [] as string[],
+        }
+    },
+
+    methods: {
+        submitForm() {
+            this.errors = []
+
+            if (this.form.email === '') {
+                this.errors.push('Your e-mail is missing')
+            }
+
+            if (this.form.name === '') {
+                this.errors.push('Your name is missing')
+            }
+
+            if (this.form.password1 === '') {
+                this.errors.push('Your password is missing')
+            }
+
+            if (this.form.password1 !== this.form.password2) {
+                this.errors.push('The password does not match')
+            }
+
+            if (this.errors.length === 0) {
+                axios
+                    .post('http://localhost:6000/api/signup', this.form)
+                    .then(response => {
+                        if (response.data.message === 'success') {
+                            this.toastStore.showToast('5000', 'The user is registered. Please log in', 'bg-emerald-500')
+
+                            this.form.email = ''
+                            this.form.name = ''
+                            this.form.password1 = ''
+                            this.form.password2 = ''
+                        } else {
+                            this.toastStore.showToast('5000', 'Something went wrong. Please try again', 'bg-red-300')
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error)
+                    })
+            }
+        }
+    }
+}
+</script>
+
 <template>
     <head>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,12 +85,12 @@
                     </h2>
 
                     <div class="mt-12">
-                        <form>
+                        <form v-on:submit.prevent="submitForm">
                             <div>
                                 <div class="text-sm font-bold text-gray-700 tracking-wide">
                                     Email Address
                                 </div>
-                                <input
+                                <input v-model="form.email"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                                     type="" placeholder="Email">
                             </div>
@@ -37,7 +107,7 @@
                                         </a>
                                     </div> -->
                                 </div>
-                                <input
+                                <input v-model="form.name"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                                     type="" placeholder="Username">
 
@@ -48,7 +118,7 @@
                                         Password
                                     </div>
                                 </div>
-                                <input
+                                <input v-model="form.password1"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                                     type="" placeholder="Password">
 
@@ -59,11 +129,22 @@
                                         Re-enter Password
                                     </div>
                                 </div>
-                                <input
+                                <input v-model="form.password2"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
                                     type="" placeholder="Password">
 
                             </div>
+
+                            <template>
+                                <div v-if="errors">
+                                    <div class="bg-red-300 text-white rounded-lg p-6">
+                                        <p v-for="error in errors" v-bind:key="error">
+                                            {{ error }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </template>
+
                             <div class="mt-10">
                                 <button class="bg-emerald-500 text-gray-100 p-4 w-full rounded-full tracking-wide
                                 font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-emerald-600
@@ -74,7 +155,8 @@
                         </form>
                         <div class="mt-12 text-sm font-display font-semibold text-gray-700 text-center">
                             Already have an account?
-                            <RouterLink :to="{ name: 'login' }" class="cursor-pointer text-emerald-600 hover:text-emerald-800">
+                            <RouterLink :to="{ name: 'login' }"
+                                class="cursor-pointer text-emerald-600 hover:text-emerald-800">
                                 Log In!
                             </RouterLink>
                         </div>

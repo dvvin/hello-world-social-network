@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Python virtual environment
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Django specific
+*.log
+*.pot
+*.pyc
+db.sqlite3
+/local_settings.py
+
+# DRF and JWT
+# You might not have specific files for these, but ensure no configuration secrets are committed
+
+# Pillow specific
+# Again, you might not have specific files, but be cautious with any generated images or resources
+
+# Jupyter notebooks
+.ipynb_checkpoints
+
+# Others
+.DS_Store
+*.swp
