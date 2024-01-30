@@ -29,7 +29,7 @@ export const useUserStore = defineStore({
                 this.user.email = localStorage.getItem('user.email')
                 this.user.isAuthenticated = true
 
-                // this.refreshToken()
+                this.refreshToken()
 
                 console.log('Initialized user:', this.user)
             }
@@ -88,7 +88,7 @@ export const useUserStore = defineStore({
         },
 
         refreshToken() {
-            axios.post('/api/account/refresh/', {
+            axios.post('http://127.0.0.1:8000/api/refresh', {
                 refresh: this.user.refresh
             })
                 .then((response) => {

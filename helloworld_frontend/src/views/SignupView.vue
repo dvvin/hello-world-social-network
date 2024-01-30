@@ -1,6 +1,5 @@
 <script lang="ts">
 import axios from 'axios'
-
 import { useToastStore } from '@/stores/toast'
 
 export default {
@@ -46,7 +45,7 @@ export default {
 
             if (this.errors.length === 0) {
                 axios
-                    .post('http://localhost:6000/api/signup', this.form)
+                    .post('http://127.0.0.1:8000/api/signup', this.form)
                     .then(response => {
                         if (response.data.message === 'success') {
                             this.toastStore.showToast('5000', 'The user is registered. Please log in', 'bg-emerald-500')
@@ -120,7 +119,7 @@ export default {
                                 </div>
                                 <input v-model="form.password1"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                                    type="" placeholder="Password">
+                                    type="password" placeholder="Password">
 
                             </div>
                             <div class="mt-8">
@@ -131,7 +130,7 @@ export default {
                                 </div>
                                 <input v-model="form.password2"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                                    type="" placeholder="Password">
+                                    type="password" placeholder="Password">
 
                             </div>
 

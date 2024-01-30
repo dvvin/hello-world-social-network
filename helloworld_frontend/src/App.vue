@@ -1,25 +1,55 @@
-<script setup lang="ts">
-  import Toast from '@/components/Toast.vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import axios from 'axios';
+import Toast from '@/components/Toast.vue';
+import { useUserStore } from '@/stores/user';
 
-  // export default {
-  //   components: {
-  //     Toast
-  //   }
-  // }
+export default defineComponent({
+  setup() {
+    const userStore = useUserStore();
+
+    return {
+      userStore
+    };
+  },
+
+  components: {
+    Toast
+  },
+
+  beforeCreate() {
+    this.userStore.initStore()
+
+    const token = this.userStore.user.access;
+
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+    } else {
+      axios.defaults.headers.common["Authorization"] = "";
+    }
+  }
+});
 </script>
 
+
 <template>
-  <nav class=" px-8 border-b border-gray-200">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+  </head>
+
+  <nav class="font-m-plus-rounded-1c px-8 border-b border-gray-200">
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
 
         <RouterLink :to="{ name: 'feed' }">
           <a href="#">
-            <img src="/hw_logo_trans.png" alt="Logo" class="h-20"> <!-- Adjust the class for height as needed -->
+            <img src="/hw_logo_trans.png" alt="Logo" class="h-20">
           </a>
         </RouterLink>
 
-        <div class="menu-center flex space-x-12">
+        <div v-if="userStore.user.isAuthenticated" class="menu-center flex space-x-12">
           <RouterLink :to="{ name: 'home' }" class="text-purple-700">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="w-6 h-6">
@@ -55,10 +85,35 @@
             </svg>
           </RouterLink>
         </div>
+
         <div class="menu-right">
-          <a href="#">
-            <img src="https://i.pravatar.cc/40?img=70" class="rounded-full">
-          </a>
+          <template v-if="userStore.user.isAuthenticated">
+            <a href="#">
+              <img src="https://i.pravatar.cc/40?img=70" class="rounded-full">
+            </a>
+          </template>
+
+          <template v-else>
+            <RouterLink :to="{ name: 'login' }">
+              <button type="button"
+                class="mr-2 mb-2 text-white bg-emerald-500 hover:bg-emerald-600 focus:ring-4 focus:outline-none
+               focus:ring-emerald-200 dark:focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
+                <strong>
+                  Login
+                </strong>
+              </button>
+            </RouterLink>
+
+            <RouterLink :to="{ name: 'signup' }">
+              <button type="button"
+                class="text-white bg-violet-500 hover:bg-violet-600 focus:ring-4 focus:outline-none
+               focus:ring-violet-200 dark:focus:ring-violet-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
+                <strong>
+                  Sign Up
+                </strong>
+              </button>
+            </RouterLink>
+          </template>
         </div>
       </div>
     </div>

@@ -8,15 +8,15 @@ from rest_framework.decorators import (
 
 from .forms import SignupForm
 
-# @api_view(["GET"])
-# def me(request):
-#     return JsonResponse(
-#         {
-#             "id": request.user.id,
-#             "name": request.user.name,
-#             "email": request.user.email,
-#         }
-#     )
+@api_view(["GET"])
+def me(request):
+    return JsonResponse(
+        {
+            "id": request.user.id,
+            "name": request.user.name,
+            "email": request.user.email,
+        }
+    )
 
 
 @api_view(["POST"])
