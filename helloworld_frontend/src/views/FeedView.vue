@@ -1,11 +1,67 @@
 <script lang="ts">
-import PeopleYouMayKnow from '@/components/PeopleYouMayKnow.vue';
-import Trends from '@/components/Trends.vue';
+import axios from 'axios'
+import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
+import Trends from '../components/Trends.vue'
+
+interface Post {
+    body: string;
+    created_at_formatted: string;
+    created_by: {
+        email: string;
+        id: string;
+        name: string;
+    };
+    id: string;
+}
 
 export default {
     name: 'FeedView',
+
     components: {
-        PeopleYouMayKnow, Trends
+        PeopleYouMayKnow,
+        Trends,
+    },
+
+    data() {
+        return {
+            posts: [] as Post[],
+            body: '',
+        }
+    },
+
+    mounted() {
+        this.getFeed()
+    },
+
+    methods: {
+        getFeed() {
+            axios
+                .get('http://127.0.0.1:8000/api/posts/')
+                .then(response => {
+                    console.log('data', response.data)
+
+                    this.posts = response.data
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+        },
+
+        submitForm() {
+            axios
+                .post('http://127.0.0.1:8000/api/posts/create/', {
+                    'body': this.body
+                })
+                .then(response => {
+                    console.log('data', response.data)
+
+                    this.posts.unshift(response.data)
+                    this.body = ''
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+        }
     }
 }
 </script>
@@ -34,96 +90,47 @@ export default {
 
             <div class="main-center col-span-2 space-y-4">
                 <div class="bg-white border border-gray-200 rounded-lg">
-                    <div class="p-4">
-                        <textarea class="p-4 w-full bg-gray-100 rounded-lg" placeholder="Say helloWorld!"></textarea>
-                    </div>
+                    <form v-on:submit.prevent="submitForm" method="post">
+                        <div class="p-4">
+                            <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
+                                placeholder="Say helloWorld!"></textarea>
+                        </div>
 
-                    <div class="p-4 border-t border-gray-100 flex justify-between">
-                        <button class="inline-block px-4 py-2.5 mt-2 bg-violet-600 focus:ring-4
+                        <div class="p-4 border-t border-gray-100 flex justify-between">
+                            <button class="inline-block px-4 py-2.5 mt-2 bg-violet-600 focus:ring-4
                         focus:outline-none focus:ring-violet-200 dark:focus:ring-violet-800 text-white rounded-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 fill-gray-200" viewBox="0 0 24 24">
-                                <path d="M22 13a1 1 0 0 0-1 1v4.213A2.79 2.79 0 0 1 18.213 21H5.787A2.79 2.79 0 0 1 3 18.213V14a1 1 0 0 0-2 0v4.213A4.792
-                                    4.792 0 0 0 5.787 23h12.426A4.792 4.792 0 0 0 23 18.213V14a1 1 0 0 0-1-1Z"
-                                    data-original="#000000" />
-                                <path d="M6.707 8.707 11 4.414V17a1 1 0 0 0 2 0V4.414l4.293 4.293a1 1 0 0 0 1.414-1.414l-6-6a1
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 fill-gray-200" viewBox="0 0 24 24">
+                                    <path
+                                        d="M22 13a1 1 0 0 0-1 1v4.213A2.79 2.79 0 0 1 18.213 21H5.787A2.79 2.79 0 0 1 3 18.213V14a1
+                                    1 0 0 0-2 0v4.213A4.792 4.792 0 0 0 5.787 23h12.426A4.792 4.792 0 0 0 23 18.213V14a1 1 0 0 0-1-1Z"
+                                        data-original="#000000" />
+                                    <path d="M6.707 8.707 11 4.414V17a1 1 0 0 0 2 0V4.414l4.293 4.293a1 1 0 0 0 1.414-1.414l-6-6a1
                                     1 0 0 0-1.414 0l-6 6a1 1 0 0 0 1.414 1.414Z" data-original="#000000" />
-                            </svg>
-                        </button>
+                                </svg>
+                            </button>
 
-                        <button type="button"
-                            class="text-white bg-gradient-to-r from-violet-500 to-emerald-500 hover:bg-gradient-to-l focus:ring-4
-                        focus:outline-none focus:ring-violet-200 dark:focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
-                            <strong>
-                                Post
-                            </strong>
-                        </button>
-                    </div>
+                            <button type="submit" class="text-white bg-gradient-to-r from-violet-500 to-emerald-500 hover:bg-gradient-to-l
+                                focus:ring-4 focus:outline-none focus:ring-violet-200 dark:focus:ring-emerald-300 font-medium
+                                rounded-lg text-sm px-5 py-2.5 text-center mt-2">
+                                <strong>Post</strong>
+                            </button>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                <div v-for="post in posts" v-bind:key="post.id" class="p-4 bg-white border border-gray-200 rounded-lg">
                     <div class="mb-6 flex items-center justify-between">
                         <div class="flex items-center space-x-6">
                             <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
 
-                            <p><strong>Code With Dav</strong></p>
+                            <p><strong>{{ post.created_by.name }}</strong></p>
                         </div>
 
-                        <p class="text-gray-600">18 minutes ago</p>
-                    </div>
-
-                    <img src="https://images.unsplash.com/photo-1661956602868-6ae368943878?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=2670&amp;q=80"
-                        class="w-full rounded-lg">
-
-                    <div class="my-6 flex justify-between">
-                        <div class="flex space-x-6">
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z">
-                                    </path>
-                                </svg>
-
-                                <span class="text-gray-500 text-xs">82 likes</span>
-                            </div>
-
-                            <div class="flex items-center space-x-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z">
-                                    </path>
-                                </svg>
-
-                                <span class="text-gray-500 text-xs">0 comments</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z">
-                                </path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-4 bg-white border border-gray-200 rounded-lg">
-                    <div class="mb-6 flex items-center justify-between">
-                        <div class="flex items-center space-x-6">
-                            <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
-
-                            <p><strong>Code With Dav</strong></p>
-                        </div>
-
-                        <p class="text-gray-600">28 minutes ago</p>
+                        <p class="text-gray-600">{{ post.created_at_formatted }} ago</p>
                     </div>
 
                     <p>
-                        This is just a random text post. This is just a random text post. This is just a random text post.
-                        This is just a random text post.
+                        {{ post.body }}
                     </p>
 
                     <div class="my-6 flex justify-between">
@@ -131,19 +138,20 @@ export default {
                             <div class="flex items-center space-x-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597
+                                     1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1
+                                        3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z">
                                     </path>
                                 </svg>
-
                                 <span class="text-gray-500 text-xs">82 likes</span>
                             </div>
 
                             <div class="flex items-center space-x-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                     stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3
+                                    7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969
+                                    0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z">
                                     </path>
                                 </svg>
 
@@ -154,8 +162,8 @@ export default {
                         <div>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12
+                                12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z">
                                 </path>
                             </svg>
                         </div>
