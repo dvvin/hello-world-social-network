@@ -3,6 +3,7 @@ import axios from 'axios'
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
+import { useUserStore } from '@/stores/user';
 
 interface Post {
     body: string;
@@ -16,7 +17,15 @@ interface Post {
 }
 
 export default {
-    name: 'FeedView',
+    name: 'ProfileView',
+
+    setup() {
+        const userStore = useUserStore();
+
+        return {
+            userStore
+        };
+    },
 
     components: {
         PeopleYouMayKnow,
@@ -27,6 +36,7 @@ export default {
     data() {
         return {
             posts: [] as Post[],
+            user: {} as any,
             body: '',
         }
     },
@@ -35,12 +45,23 @@ export default {
         this.getFeed()
     },
 
+    watch: {
+        '$route.params.id': {
+            handler: function () {
+                this.getFeed()
+            },
+            deep: true,
+            immediate: true
+        }
+    },
+
     methods: {
         getFeed() {
             axios
-                .get('http://127.0.0.1:8000/api/posts/')
+                .get(`http://127.0.0.1:8000/api/posts/profile/${this.$route.params.id}/`)
                 .then(response => {
-                    this.posts = response.data
+                    this.posts = response.data.posts
+                    this.user = response.data.user
                 })
                 .catch(error => {
                     console.log('error', error)
@@ -74,11 +95,20 @@ export default {
     <main class="font-m-plus-rounded-1c px-8 py-6 bg-gray-100">
         <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
             <div class="main-left col-span-1">
-                <PeopleYouMayKnow />
+                <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
+                    <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+
+                    <p><strong>{{ user.name }}</strong></p>
+
+                    <div class="mt-6 flex space-x-8 justify-around">
+                        <p class="text-xs text-gray-500">182 friends</p>
+                        <p class="text-xs text-gray-500">120 posts</p>
+                    </div>
+                </div>
             </div>
 
             <div class="main-center col-span-2 space-y-4">
-                <div class="bg-white border border-gray-200 rounded-lg">
+                <div v-if="userStore.user.id === user.id" class="bg-white border border-gray-200 rounded-lg">
                     <form v-on:submit.prevent="submitForm" method="post">
                         <div class="p-4">
                             <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
@@ -114,6 +144,7 @@ export default {
             </div>
 
             <div class="main-right col-span-1 space-y-4">
+                <PeopleYouMayKnow />
                 <Trends />
             </div>
         </div>
