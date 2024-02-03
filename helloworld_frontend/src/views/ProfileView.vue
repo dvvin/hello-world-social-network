@@ -63,13 +63,15 @@ export default {
     methods: {
         sendFriendshipRequest() {
             axios
-                .post(`http://127.0.0.1:8000/api/friends/${this.$route.params.id}/request/`)
+                .post(`http://127.0.0.1:8000/api/friends/${this.user.id}/request/`)
                 .then(response => {
                     console.log('data', response.data)
 
                     if (response.data.message == 'request already sent') {
                         this.toastStore.showToast('5000', 'The request has already been sent!', 'bg-red-300')
-                    } else {
+                    }
+
+                    else {
                         this.toastStore.showToast('5000', 'The request was sent!', 'bg-emerald-300')
                     }
                 })
@@ -102,6 +104,14 @@ export default {
                 .catch(error => {
                     console.log('error', error)
                 })
+        },
+
+        logout() {
+            console.log('Log out')
+
+            this.userStore.removeToken()
+
+            this.$router.push('/login')
         }
     }
 }
@@ -125,10 +135,16 @@ export default {
                     <p><strong>{{ user.name }}</strong></p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
-                        <button @click="sendFriendshipRequest"
+                        <button @click="sendFriendshipRequest" v-if="userStore.user.id !== user.id"
                             class="inline-block mt-[-8px] py-2 px-2 bg-purple-600 text-xs text-white rounded-lg">
                             <i class="fa-solid fa-user-plus fa-lg"></i>
                         </button>
+
+                        <button @click="logout" v-if="userStore.user.id === user.id"
+                            class="inline-block mt-[-8px] py-2 px-2 bg-red-600 text-xs text-white rounded-lg">
+                            logout
+                        </button>
+
                         <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">
                             {{ user.friends_count }} friends
                         </RouterLink>

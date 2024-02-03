@@ -50,7 +50,7 @@ export default defineComponent({
         </RouterLink>
 
         <div v-if="userStore.user.isAuthenticated" class="menu-center flex space-x-12">
-          <RouterLink :to="{ name: 'home' }" class="text-purple-700">
+          <RouterLink :to="{ name: 'feed' }" class="text-purple-700">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
               stroke="currentColor" class="w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round"

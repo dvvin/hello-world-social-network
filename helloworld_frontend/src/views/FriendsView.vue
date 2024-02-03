@@ -2,8 +2,8 @@
 import axios from 'axios'
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
-import FeedItem from '../components/FeedItem.vue'
 import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/toast'
 
 interface Post {
     body: string;
@@ -21,9 +21,11 @@ export default {
 
     setup() {
         const userStore = useUserStore()
+        const toastStore = useToastStore()
 
         return {
-            userStore
+            userStore,
+            toastStore
         };
     },
 
@@ -66,7 +68,16 @@ export default {
             axios
                 .post(`http://127.0.0.1:8000/api/friends/${pk}/${status}/`)
                 .then(response => {
-                    console.log('data', response.data)
+                    console.log('Response:', response.data);
+                    if (status === 'rejected') {
+                        this.toastStore.showToast('5000', 'You rejected the request.', 'bg-red-300')
+                        this.friendshipRequests = this.friendshipRequests.filter((request: { created_by: { id: number } }) => request.created_by.id !== pk);
+                    }
+                    
+                    else {
+                        this.toastStore.showToast('5000', 'You accepted the request.', 'bg-emerald-300')
+                        this.getFriends();
+                    }
                 })
                 .catch(error => {
                     console.log('error', error)
@@ -102,7 +113,8 @@ export default {
 
         <div class="main-center col-span-2 space-y-4">
             <h2 class="mb-6 text-xl">Friendship requests</h2>
-            <div class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4" v-if="friendshipRequests.length">
+            <div class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4"
+                v-if="friendshipRequests.length">
 
 
                 <div class="p-4 text-center bg-gray-100 rounded-lg" v-for="friendshipRequest in friendshipRequests"
