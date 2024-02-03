@@ -3,7 +3,8 @@ import axios from 'axios'
 import PeopleYouMayKnow from '../components/PeopleYouMayKnow.vue'
 import Trends from '../components/Trends.vue'
 import FeedItem from '../components/FeedItem.vue'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/toast'
 
 interface Post {
     body: string;
@@ -20,10 +21,12 @@ export default {
     name: 'ProfileView',
 
     setup() {
-        const userStore = useUserStore();
+        const userStore = useUserStore()
+        const toastStore = useToastStore()
 
         return {
-            userStore
+            userStore,
+            toastStore
         };
     },
 
@@ -36,7 +39,9 @@ export default {
     data() {
         return {
             posts: [] as Post[],
-            user: {} as any,
+            user: {
+                id: null
+            } as any,
             body: '',
         }
     },
@@ -56,6 +61,23 @@ export default {
     },
 
     methods: {
+        sendFriendshipRequest() {
+            axios
+                .post(`http://127.0.0.1:8000/api/friends/${this.$route.params.id}/request/`)
+                .then(response => {
+                    console.log('data', response.data)
+
+                    if (response.data.message == 'request already sent') {
+                        this.toastStore.showToast('5000', 'The request has already been sent!', 'bg-red-300')
+                    } else {
+                        this.toastStore.showToast('5000', 'The request was sent!', 'bg-emerald-300')
+                    }
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+        },
+
         getFeed() {
             axios
                 .get(`http://127.0.0.1:8000/api/posts/profile/${this.$route.params.id}/`)
@@ -90,6 +112,8 @@ export default {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin>
         <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     </head>
 
     <main class="font-m-plus-rounded-1c px-8 py-6 bg-gray-100">
@@ -101,9 +125,18 @@ export default {
                     <p><strong>{{ user.name }}</strong></p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
-                        <p class="text-xs text-gray-500">182 friends</p>
+                        <button @click="sendFriendshipRequest"
+                            class="inline-block mt-[-8px] py-2 px-2 bg-purple-600 text-xs text-white rounded-lg">
+                            <i class="fa-solid fa-user-plus fa-lg"></i>
+                        </button>
+                        <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">
+                            {{ user.friends_count }} friends
+                        </RouterLink>
                         <p class="text-xs text-gray-500">120 posts</p>
+
                     </div>
+
+
                 </div>
             </div>
 
