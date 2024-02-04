@@ -194,7 +194,9 @@ export default {
 
             <div class="main-right col-span-1 space-y-4">
                 <PeopleYouMayKnow />
-                <Trends />
+                <div class="pt-60">
+                    <Trends />
+                </div>
             </div>
         </div>
     </main>

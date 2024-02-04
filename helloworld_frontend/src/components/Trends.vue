@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 bg-white border border-gray-200 rounded-lg">
+    <div class="fixed w-[308px] p-4 bg-white border border-gray-200 rounded-lg">
         <h3 class="mb-6 text-xl">Trends</h3>
         <div class="space-y-4">
             <div class="flex items-center justify-between">
