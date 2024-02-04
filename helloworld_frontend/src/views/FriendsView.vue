@@ -46,6 +46,14 @@ export default {
         this.getFriends()
     },
 
+    watch: {
+        // Watch for changes in $route.params.id
+        '$route.params.id': {
+            immediate: true, // This ensures the watcher is triggered after the component is mounted
+            handler: 'getFriends', // Call getFriends method whenever the route parameter changes
+        }
+    },
+
     methods: {
         getFriends() {
             axios
@@ -73,7 +81,7 @@ export default {
                         this.toastStore.showToast('5000', 'You rejected the request.', 'bg-red-300')
                         this.friendshipRequests = this.friendshipRequests.filter((request: { created_by: { id: number } }) => request.created_by.id !== pk);
                     }
-                    
+
                     else {
                         this.toastStore.showToast('5000', 'You accepted the request.', 'bg-emerald-300')
                         this.getFriends();
@@ -83,7 +91,6 @@ export default {
                     console.log('error', error)
                 })
         }
-
     }
 }
 </script>
@@ -112,51 +119,66 @@ export default {
         </div>
 
         <div class="main-center col-span-2 space-y-4">
-            <h2 class="mb-6 text-xl">Friendship requests</h2>
-            <div class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4"
-                v-if="friendshipRequests.length">
+            <div v-if="friendshipRequests.length > 0" class="p-4 bg-white border border-gray-200 rounded-lg">
+                <h2 class="mb-6 text-xl">Friendship requests</h2>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="p-4 text-center bg-gray-100 rounded-lg" v-for="friendshipRequest in friendshipRequests"
+                        v-bind:key="friendshipRequest.id">
+                        <RouterLink :to="{ name: 'profile', params: { id: friendshipRequest.created_by.id } }">
+                            <img src="https://i.pravatar.cc/100?img=70" class="mb-6 mx-auto rounded-full">
+                        </RouterLink>
 
+                        <RouterLink :to="{ name: 'profile', params: { id: friendshipRequest.created_by.id } }">
+                            <p>
+                                <strong>
+                                    {{ friendshipRequest.created_by.name }}
+                                </strong>
+                            </p>
+                        </RouterLink>
+                        <div class="mt-6 flex space-x-8 justify-around">
+                            <RouterLink :to="{ name: 'friends', params: { id: friendshipRequest.created_by.id } }">
+                                <p class="text-xs text-gray-500">{{ friendshipRequest.created_by.friends_count }}
+                                    friends
+                                </p>
+                            </RouterLink>
 
-                <div class="p-4 text-center bg-gray-100 rounded-lg" v-for="friendshipRequest in friendshipRequests"
-                    v-bind:key="friendshipRequest.id">
-                    <img src="https://i.pravatar.cc/100?img=70" class="mb-6 mx-auto rounded-full">
-
-                    <p>
-                        <strong>
-                            <RouterLink :to="{ name: 'profile', params: { 'id': friendshipRequest.created_by.id } }">{{
-                                friendshipRequest.created_by.name }}</RouterLink>
-                        </strong>
-                    </p>
-
-                    <div class="mt-6 flex space-x-8 justify-around">
-                        <p class="text-xs text-gray-500">{{ friendshipRequest.created_by.friends_count }} friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
-                    </div>
-
-                    <div class="mt-6 space-x-4">
-                        <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg"
-                            @click="handleRequest('accepted', friendshipRequest.created_by.id)">Accept</button>
-                        <button class="inline-block py-4 px-6 bg-red-600 text-white rounded-lg"
-                            @click="handleRequest('rejected', friendshipRequest.created_by.id)">Reject</button>
+                            <p class="text-xs text-gray-500">120 posts</p>
+                        </div>
+                        <div class="mt-6 space-x-4" @click.stop>
+                            <button class="inline-block mt-[-8px] py-2 px-2.5 bg-emerald-600 text-xs text-white rounded-lg"
+                                @click="handleRequest('accepted', friendshipRequest.created_by.id)">
+                                <i class=" fa-solid fa-check"></i>
+                            </button>
+                            <button class="inline-block mt-[-8px] py-2 px-3 bg-red-600 text-xs text-white rounded-lg"
+                                @click="handleRequest('rejected', friendshipRequest.created_by.id)">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <h2 class="mb-6 text-xl">Friends</h2>
-            <div class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-2 gap-4" v-if="friends.length">
+            <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                <h2 class="mb-6 text-xl">{{ user.name }}'s Friends</h2>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="block" v-for="user in friends" v-bind:key="user.id">
+                        <div class="p-4 text-center bg-gray-100 rounded-lg">
+                            <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
+                                <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full mx-auto">
+                            </RouterLink>
 
-                <div class="p-4 text-center bg-gray-100 rounded-lg" v-for="user in friends" v-bind:key="user.id">
-                    <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
-
-                    <p>
-                        <strong>
-                            <RouterLink :to="{ name: 'profile', params: { 'id': user.id } }">{{ user.name }}</RouterLink>
-                        </strong>
-                    </p>
-
-                    <div class="mt-6 flex space-x-8 justify-around">
-                        <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                            <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
+                                <p>
+                                    <strong>{{ user.name }}</strong>
+                                </p>
+                            </RouterLink>
+                            <div class="mt-6 flex space-x-8 justify-around">
+                                <RouterLink :to="{ name: 'friends', params: { id: user.id } }">
+                                    <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
+                                </RouterLink>
+                                <p class="text-xs text-gray-500">120 posts</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -39,7 +39,7 @@ export default defineComponent({
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
   </head>
 
-  <nav class="font-m-plus-rounded-1c px-8 border-b border-gray-200">
+  <nav class="sticky top-0 z-50 font-m-plus-rounded-1c px-8 border-b border-gray-200 bg-white">
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
 
