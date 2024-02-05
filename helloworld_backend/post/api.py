@@ -12,23 +12,20 @@ from rest_framework.decorators import (
 
 @api_view(['GET'])
 def post_list(request):
-    user_ids = [request.user.id]
+    user_ids = [request.user.id] + list(request.user.friends.values_list('id', flat=True))
+    posts = Post.objects.filter(created_by_id__in=user_ids)
 
-    for user in request.user.friends.all():
-        user_ids.append(user.id)
-
-    posts = Post.objects.filter(created_by_id__in=list(user_ids))
-    serializer = PostSerializer(posts, many=True)
-
+    serializer = PostSerializer(posts, many=True, context={'request': request})
     return JsonResponse(serializer.data, safe=False)
+
 
 @api_view(["GET"])
 def post_list_profile(request, id):
     user = User.objects.get(pk=id)
     posts = Post.objects.filter(created_by_id=id)
 
-    posts_serializer = PostSerializer(posts, many=True)
-    user_serializer = UserSerializer(user)
+    posts_serializer = PostSerializer(posts, many=True, context={'request': request})
+    user_serializer = UserSerializer(user, context={'request': request})
 
     return JsonResponse(
         {"posts": posts_serializer.data, "user": user_serializer.data}, safe=False
@@ -42,26 +39,28 @@ def post_create(request):
         post = form.save(commit=False)
         post.created_by = request.user
         post.save()
-
-        serializer = PostSerializer(post)
-
+        serializer = PostSerializer(post, context={'request': request})
         return JsonResponse(serializer.data, safe=False)
+
     else:
-        return JsonResponse({"error": "add somehting here later!..."})
+        return JsonResponse(form.errors, status=400)
 
 @api_view(['POST'])
 def post_like(request, pk):
     post = Post.objects.get(pk=pk)
-    print(post.likes.filter(created_by=request.user))
+    like = post.likes.filter(created_by=request.user).first()
 
-    if not post.likes.filter(created_by=request.user):
+    if like:
+        post.likes.remove(like)
+        post.likes_count = max(post.likes_count - 1, 0)
+        post.save()
+        message = 'like removed'
+
+    else:
         like = Like.objects.create(created_by=request.user)
-
-        post = Post.objects.get(pk=pk)
-        post.likes_count = post.likes_count + 1
+        post.likes_count += 1
         post.likes.add(like)
         post.save()
+        message = 'like created'
 
-        return JsonResponse({'message': 'like created'})
-    else:
-        return JsonResponse({'message': 'post already liked'})
+    return JsonResponse({'message': message})

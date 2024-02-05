@@ -104,7 +104,7 @@ export default {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     </head>
 
-    <div class="font-m-plus-rounded-1c max-w-7xl mx-auto grid grid-cols-4 gap-4">
+    <div class="font-m-plus-rounded-1c pt-6 max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-left col-span-1">
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
                 <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
@@ -186,8 +186,9 @@ export default {
 
         <div class="main-right col-span-1 space-y-4">
             <PeopleYouMayKnow />
-
-            <Trends />
+            <div class="pt-60">
+                <Trends />
+            </div>
         </div>
     </div>
 </template>
