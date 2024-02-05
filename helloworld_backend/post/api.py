@@ -64,3 +64,15 @@ def post_like(request, pk):
         message = 'like created'
 
     return JsonResponse({'message': message})
+
+@api_view(['GET'])
+def post_likes(request, pk):
+    try:
+        post = Post.objects.get(pk=pk)
+        likes = post.likes.all()
+        users_who_liked = [like.created_by for like in likes]
+        serializer = UserSerializer(users_who_liked, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    
+    except Post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found'}, status=404)

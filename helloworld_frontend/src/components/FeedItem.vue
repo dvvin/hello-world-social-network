@@ -7,6 +7,7 @@ export default {
             type: Object,
             default: () => ({})
         },
+
         likedByUser: {
             type: Boolean,
             default: false
@@ -15,16 +16,20 @@ export default {
 
     data() {
         return {
-            isLiked: this.post.is_liked_by_user
+            isLiked: this.post.is_liked_by_user,
+            showLikesList: false,
+            usersWhoLiked: [] as any
         };
+    },
+
+    mounted() {
+        this.fetchLikes(this.post.id);
     },
 
     methods: {
         likePost(id: string) {
             axios.post(`http://127.0.0.1:8000/api/posts/${id}/like/`)
                 .then(response => {
-                    console.log('data', response.data);
-
                     if (response.data.message === 'like created') {
                         this.post.likes_count += 1;
                         this.isLiked = true;
@@ -34,11 +39,24 @@ export default {
                         this.post.likes_count = Math.max(this.post.likes_count - 1, 0);
                         this.isLiked = false;
                     }
+
+                    this.fetchLikes(id);
                 })
                 .catch(error => {
                     console.log('error', error);
                 });
-        }
+        },
+
+        fetchLikes(id: string) {
+            axios.get(`http://127.0.0.1:8000/api/posts/${id}/likes/`)
+                .then(response => {
+                    this.usersWhoLiked = response.data;
+                    this.showLikesList = this.usersWhoLiked.length > 0;
+                })
+                .catch(error => {
+                    console.log('Error fetching likes:', error);
+                });
+        },
     }
 }
 </script>
@@ -78,8 +96,17 @@ export default {
         <div class="flex space-x-6">
             <div class="flex items-center space-x-2">
                 <i @click="likePost(post.id)" :class="[isLiked ? 'fa-solid' : 'fa-regular', 'fa-heart', 'fa-lg']"></i>
-                <span class="text-gray-500 text-xs">{{ post.likes_count }} likes</span>
+                <span class="text-gray-500 text-xs" @click="fetchLikes(post.id)">{{ post.likes_count }} likes</span>
             </div>
+
+            <!-- <div v-if="showLikesList" class="mt-2 bg-white shadow rounded-lg p-2">
+                <div v-if="usersWhoLiked.length" class="text-xs">
+                    <p>Liked by:</p>
+                    <ul>
+                        <li v-for="user in usersWhoLiked" :key="user.id">{{ user.name }}</li>
+                    </ul>
+                </div>
+            </div> -->
 
             <div class="flex items-center space-x-2">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
