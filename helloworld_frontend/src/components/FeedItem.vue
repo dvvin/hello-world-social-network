@@ -117,7 +117,7 @@ export default {
                     </path>
                 </svg>
 
-                <span class="text-gray-500 text-xs">3 comments</span>
+                <RouterLink :to="{name: 'postview', params: {id: post.id}}" class="text-gray-500 text-xs">{{ post.comments_count }} comments</RouterLink>
             </div>
         </div>
 
