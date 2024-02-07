@@ -69,22 +69,21 @@ export default {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     </head>
 
-    <div class="font-m-plus-rounded-1c pt-6 max-w-7xl mx-auto grid grid-cols-4 gap-4">
+    <div class="pb-6 font-m-plus-rounded-1c pt-6 max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-center col-span-3 space-y-4">
             <div class="p-4 bg-white border border-gray-200 rounded-lg" v-if="post.id">
                 <FeedItem v-bind:post="post" />
-            </div>
-
-            <div class="bg-white border border-gray-200 rounded-lg">
                 <form v-on:submit.prevent="submitForm" method="post">
                     <div class="p-4">
                         <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
-                            placeholder="What do you think?"></textarea>
+                            placeholder="Leave a comment"></textarea>
                     </div>
 
-                    <div class="p-4 border-t border-gray-100">
-                        <button class="inline-block py-4 px-6 bg-purple-600 text-white rounded-lg">Comment</button>
-                    </div>
+                    <button :disabled="!body.trim()" type="submit" class="text-white bg-gradient-to-r from-violet-500
+                             to-emerald-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-violet-200
+                             dark:focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-4 ">
+                        <strong>Post</strong>
+                    </button>
                 </form>
             </div>
 

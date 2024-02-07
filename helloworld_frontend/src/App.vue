@@ -119,7 +119,7 @@ export default defineComponent({
     </div>
   </nav>
 
-  <main class="h-[90vh] bg-gray-100">
+  <main class="min-h-screen bg-gray-100">
     <RouterView />
   </main>
 

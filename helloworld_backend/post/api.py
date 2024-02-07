@@ -14,8 +14,8 @@ from rest_framework.decorators import (
 @api_view(["GET"])
 def post_detail(request, pk):
     post = Post.objects.get(pk=pk)
-
-    return JsonResponse({"post": PostDetailSerializer(post).data})
+    context = {'request': request}
+    return JsonResponse({"post": PostDetailSerializer(post, context=context).data})
 
 
 @api_view(["GET"])
