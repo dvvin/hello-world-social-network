@@ -112,7 +112,22 @@ export default {
             this.userStore.removeToken()
 
             this.$router.push('/login')
-        }
+        },
+
+        sendDirectMessage() {
+            console.log('sendDirectMessage')
+
+            axios
+                .get(`http://127.0.0.1:8000/api/chat/${this.$route.params.id}/get-or-create/`)
+                .then(response => {
+                    console.log(response.data)
+
+                    this.$router.push('/chat')
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+        },
     }
 }
 </script>
@@ -143,6 +158,11 @@ export default {
                         <button @click="logout" v-if="userStore.user.id === user.id"
                             class="inline-block mt-[-8px] py-2 px-2 bg-red-600 text-xs text-white rounded-lg">
                             logout
+                        </button>
+
+                        <button @click="sendDirectMessage" v-if="userStore.user.id !== user.id"
+                            class="inline-block mt-[-8px] py-2 px-2.5 bg-purple-600 text-xs text-white rounded-lg">
+                            <i class="fa-regular fa-envelope fa-lg"></i>
                         </button>
 
                         <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">

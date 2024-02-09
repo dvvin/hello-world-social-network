@@ -69,6 +69,8 @@ export default {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin>
         <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     </head>
 
     <main class="font-m-plus-rounded-1c px-8 py-6 bg-gray-100">
@@ -86,16 +88,9 @@ export default {
                         </div>
 
                         <div class="p-4 border-t border-gray-100 flex justify-between">
-                            <button :disabled="!body.trim()" class="inline-block px-4 py-2.5 mt-2 bg-violet-600 focus:ring-4
+                            <button :disabled="!body.trim()" class="inline-block px-4 py-2.5 mt-2 bg-violet-600 hover:bg-violet-700 focus:ring-4
                         focus:outline-none focus:ring-violet-200 dark:focus:ring-violet-800 text-white rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 fill-gray-200" viewBox="0 0 24 24">
-                                    <path
-                                        d="M22 13a1 1 0 0 0-1 1v4.213A2.79 2.79 0 0 1 18.213 21H5.787A2.79 2.79 0 0 1 3 18.213V14a1
-                                    1 0 0 0-2 0v4.213A4.792 4.792 0 0 0 5.787 23h12.426A4.792 4.792 0 0 0 23 18.213V14a1 1 0 0 0-1-1Z"
-                                        data-original="#000000" />
-                                    <path d="M6.707 8.707 11 4.414V17a1 1 0 0 0 2 0V4.414l4.293 4.293a1 1 0 0 0 1.414-1.414l-6-6a1
-                                    1 0 0 0-1.414 0l-6 6a1 1 0 0 0 1.414 1.414Z" data-original="#000000" />
-                                </svg>
+                                <i class="fa-solid fa-plus fa-lg"></i>
                             </button>
 
                             <button :disabled="!body.trim()" type="submit" class="text-white bg-gradient-to-r from-violet-500
