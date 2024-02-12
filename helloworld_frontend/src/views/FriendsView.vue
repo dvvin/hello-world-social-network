@@ -113,7 +113,7 @@ export default {
 
                 <div class="mt-6 flex space-x-8 justify-around">
                     <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
-                    <p class="text-xs text-gray-500">120 posts</p>
+                    <p class="text-xs text-gray-500">{{ user.posts_count }} posts</p>
                 </div>
             </div>
         </div>
@@ -142,7 +142,7 @@ export default {
                                 </p>
                             </RouterLink>
 
-                            <p class="text-xs text-gray-500">120 posts</p>
+                            <p class="text-xs text-gray-500">{{ friendshipRequest.created_by.posts_count }} posts</p>
                         </div>
                         <div class="mt-6 space-x-4" @click.stop>
                             <button class="inline-block mt-[-8px] py-2 px-2.5 bg-emerald-600 text-xs text-white rounded-lg"
@@ -176,7 +176,9 @@ export default {
                                 <RouterLink :to="{ name: 'friends', params: { id: user.id } }">
                                     <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
                                 </RouterLink>
-                                <p class="text-xs text-gray-500">120 posts</p>
+                                <p class="text-xs text-gray-500">
+                                    {{ user.posts_count }} {{ user.posts_count === 1 ? 'post' : 'posts' }}
+                                </p>
                             </div>
                         </div>
                     </div>

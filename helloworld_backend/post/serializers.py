@@ -1,6 +1,8 @@
 from rest_framework import serializers
+
 from account.serializers import UserSerializer
-from .models import Post, Comment
+
+from .models import Post, Comment, Trend
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -62,3 +64,13 @@ class PostDetailSerializer(serializers.ModelSerializer):
         if request and hasattr(request, "user") and request.user.is_authenticated:
             return obj.likes.filter(created_by=request.user).exists()
         return False
+
+
+class TrendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trend
+        fields = (
+            "id",
+            "hashtag",
+            "occurences",
+        )

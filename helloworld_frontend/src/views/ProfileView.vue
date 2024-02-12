@@ -84,6 +84,7 @@ export default {
             axios
                 .get(`http://127.0.0.1:8000/api/posts/profile/${this.$route.params.id}/`)
                 .then(response => {
+                    console.log('data', response.data)
                     this.posts = response.data.posts
                     this.user = response.data.user
                 })
@@ -168,7 +169,9 @@ export default {
                         <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">
                             {{ user.friends_count }} friends
                         </RouterLink>
-                        <p class="text-xs text-gray-500">120 posts</p>
+                        <p class="text-xs text-gray-500">
+                            {{ user.posts_count }} {{ user.posts_count === 1 ? 'post' : 'posts' }}
+                        </p>
 
                     </div>
 

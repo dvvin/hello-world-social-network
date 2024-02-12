@@ -83,7 +83,9 @@ export default {
 
                         <div class="mt-6 flex space-x-8 justify-around">
                             <p class="text-xs text-gray-500">{{ user.friends_count }} friends</p>
-                            <p class="text-xs text-gray-500">120 posts</p>
+                            <p class="text-xs text-gray-500">
+                                {{ user.posts_count }} {{ user.posts_count === 1 ? 'post' : 'posts' }}
+                            </p>
                         </div>
                     </div>
                 </div>

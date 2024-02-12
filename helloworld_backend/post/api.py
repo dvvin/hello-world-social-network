@@ -1,20 +1,32 @@
 from django.http import JsonResponse
-from .forms import PostForm
-from .models import Post, Like, Comment
-from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
-from account.models import User
-from account.serializers import UserSerializer
+
 from rest_framework.decorators import (
     api_view,
     authentication_classes,
     permission_classes,
 )
 
+from account.models import User
+from account.serializers import UserSerializer
+
+from .forms import PostForm
+from .models import Post, Like, Comment, Trend
+from .serializers import (
+    PostSerializer,
+    PostDetailSerializer,
+    CommentSerializer,
+    TrendSerializer,
+)
+
+from datetime import timedelta
+from collections import Counter
+from django.utils import timezone
+
 
 @api_view(["GET"])
 def post_detail(request, pk):
     post = Post.objects.get(pk=pk)
-    context = {'request': request}
+    context = {"request": request}
     return JsonResponse({"post": PostDetailSerializer(post, context=context).data})
 
 
@@ -24,6 +36,12 @@ def post_list(request):
         request.user.friends.values_list("id", flat=True)
     )
     posts = Post.objects.filter(created_by_id__in=user_ids)
+
+    trend = request.GET.get("trend", "")
+
+    if trend:
+        pattern = rf"(?:^| )#{trend}\b"
+        posts = posts.filter(body__iregex=pattern)
 
     serializer = PostSerializer(posts, many=True, context={"request": request})
     return JsonResponse(serializer.data, safe=False)
@@ -50,6 +68,10 @@ def post_create(request):
         post = form.save(commit=False)
         post.created_by = request.user
         post.save()
+
+        post.created_by.posts_count += 1
+        post.created_by.save()
+
         serializer = PostSerializer(post, context={"request": request})
         return JsonResponse(serializer.data, safe=False)
 
@@ -103,5 +125,32 @@ def post_create_comment(request, pk):
     post.save()
 
     serializer = CommentSerializer(comment)
+
+    return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(["GET"])
+def get_trends(request):
+    serializer = TrendSerializer(Trend.objects.all(), many=True)
+
+    def extract_hashtags(text, trends):
+        for word in text.split():
+            if word[0] == "#":
+                trends.append(word[1:])
+
+        return trends
+
+    for trend in Trend.objects.all():
+        trend.delete()
+
+    trends = []
+    this_hour = timezone.now().replace(minute=0, second=0, microsecond=0)
+    twenty_four_hours = this_hour - timedelta(hours=24)
+
+    for post in Post.objects.filter(created_at__gte=twenty_four_hours):
+        extract_hashtags(post.body, trends)
+
+    for trend in Counter(trends).most_common(5):
+        Trend.objects.create(hashtag=trend[0], occurences=trend[1])
 
     return JsonResponse(serializer.data, safe=False)
