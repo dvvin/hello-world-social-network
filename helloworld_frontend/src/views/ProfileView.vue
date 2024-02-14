@@ -161,6 +161,11 @@ export default {
                             logout
                         </button>
 
+                        <RouterLink to="/profile/edit" v-if="userStore.user.id === user.id"
+                            class="inline-block mt-[-8px] py-2 px-2 bg-violet-600 text-xs text-white rounded-lg">
+                            edit
+                        </RouterLink>
+
                         <button @click="sendDirectMessage" v-if="userStore.user.id !== user.id"
                             class="inline-block mt-[-8px] py-2 px-2.5 bg-purple-600 text-xs text-white rounded-lg">
                             <i class="fa-regular fa-envelope fa-lg"></i>

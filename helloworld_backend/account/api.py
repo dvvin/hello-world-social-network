@@ -113,3 +113,18 @@ def handle_request(request, pk, status):
         message = "Friendship request already sent"
 
     return JsonResponse({"message": message})
+
+
+@api_view(["POST"])
+def editprofile(request):
+    user = request.user
+    email = request.data.get("email")
+
+    if User.objects.exclude(id=user.id).filter(email=email).exists():
+        return JsonResponse({"message": "Email already in use"})
+
+    else:
+        user.email = email
+        user.name = request.data.get("name")
+        user.save()
+        return JsonResponse({"message": "Profile updated"})
