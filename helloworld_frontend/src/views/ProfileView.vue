@@ -65,8 +65,6 @@ export default {
             axios
                 .post(`http://127.0.0.1:8000/api/friends/${this.user.id}/request/`)
                 .then(response => {
-                    console.log('data', response.data)
-
                     if (response.data.message == 'request already sent') {
                         this.toastStore.showToast('5000', 'The request has already been sent!', 'bg-red-300')
                     }
@@ -84,7 +82,6 @@ export default {
             axios
                 .get(`http://127.0.0.1:8000/api/posts/profile/${this.$route.params.id}/`)
                 .then(response => {
-                    console.log('data', response.data)
                     this.posts = response.data.posts
                     this.user = response.data.user
                 })
@@ -108,21 +105,15 @@ export default {
         },
 
         logout() {
-            console.log('Log out')
-
             this.userStore.removeToken()
 
             this.$router.push('/login')
         },
 
         sendDirectMessage() {
-            console.log('sendDirectMessage')
-
             axios
                 .get(`http://127.0.0.1:8000/api/chat/${this.$route.params.id}/get-or-create/`)
                 .then(response => {
-                    console.log(response.data)
-
                     this.$router.push('/chat')
                 })
                 .catch(error => {
@@ -146,7 +137,7 @@ export default {
         <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
             <div class="main-left col-span-1">
                 <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                    <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+                    <img :src="user.get_avatar" class="mb-6 rounded-full">
 
                     <p><strong>{{ user.name }}</strong></p>
 

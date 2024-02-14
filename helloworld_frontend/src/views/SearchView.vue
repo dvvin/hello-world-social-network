@@ -20,15 +20,11 @@ export default {
 
     methods: {
         submitForm() {
-            console.log('submitForm', this.query)
-
             axios
                 .post('http://127.0.0.1:8000/api/search/', {
                     query: this.query
                 })
                 .then(response => {
-                    console.log('response:', response.data)
-
                     this.users = response.data.users
                     this.posts = response.data.posts
                 })
@@ -70,7 +66,7 @@ export default {
                 <div v-if="users.length" class="p-4 bg-white border border-gray-200 rounded-lg grid grid-cols-4 gap-4">
                     <div v-for="user in users" v-bind:key="user.id" class="p-4 text-center bg-gray-100 rounded-lg">
                         <RouterLink :to="{ name: 'profile', params: { 'id': user.id } }">
-                            <img src="https://i.pravatar.cc/300?img=70" class="mb-6 rounded-full">
+                            <img :src="user.get_avatar" class="mb-6 rounded-full">
                         </RouterLink>
 
                         <p>

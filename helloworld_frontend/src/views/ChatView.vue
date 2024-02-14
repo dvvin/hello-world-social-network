@@ -93,18 +93,19 @@ export default {
                         :key="conversation.id" v-on:click="setActiveConversation(conversation.id)"
                         :class="{ 'pt-4': index !== 0, 'border-t': index !== 0, 'border-gray-200': index !== 0 }">
                         <div class="flex items-center space-x-2">
-                            <RouterLink :to="{ name: 'profile', params: { id: conversation.users[0].id } }">
-                                <img src="https://i.pravatar.cc/300?img=70" class="w-10 h-10 rounded-full">
-                            </RouterLink>
-                            <template v-for="user in conversation.users" :key="user.id">
-                                <p class="text-xs font-bold" v-if="user.id !== userStore.user.id">{{ user.name }}</p>
+                            <template v-for="user in conversation.users" v-bind:key="user.id">
+                                <div v-if="user.id !== userStore.user.id">
+                                    <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
+                                        <img :src="user.get_avatar" class="w-10 h-10 rounded-full">
+                                    </RouterLink>
+                                </div>
+                                <p class="text-xs font-bold pl-3.5 " v-if="user.id !== userStore.user.id">{{ user.name }}</p>
                             </template>
                         </div>
                         <span class="text-xs text-gray-500">{{ conversation.modified_at_formatted }} ago</span>
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="main-center col-span-3 space-y-4">
@@ -124,7 +125,7 @@ export default {
                             </div>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                 <RouterLink :to="{ name: 'profile', params: { id: message.created_by.id } }">
-                                    <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+                                    <img :src="message.created_by.get_avatar" class="w-[40px] rounded-full">
                                 </RouterLink>
                             </div>
                         </div>
@@ -132,7 +133,7 @@ export default {
                         <div class="flex w-full mt-2 space-x-3 max-w-md" v-else>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                 <RouterLink :to="{ name: 'profile', params: { id: message.created_by.id } }">
-                                    <img src="https://i.pravatar.cc/300?img=70" class="w-[40px] rounded-full">
+                                    <img :src="message.created_by.get_avatar" class="w-[40px] rounded-full">
                                 </RouterLink>
                             </div>
                             <div>

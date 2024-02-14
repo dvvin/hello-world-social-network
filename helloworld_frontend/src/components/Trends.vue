@@ -19,8 +19,6 @@ export default {
             axios
                 .get('http://127.0.0.1:8000/api/posts/trends/')
                 .then(response => {
-                    console.log(response.data)
-
                     this.trends = response.data
                 })
                 .catch(error => {
@@ -42,7 +40,7 @@ export default {
                 </p>
 
                 <RouterLink :to="{ name: 'trendview', params: { id: trend.hashtag } }"
-                    class="py-2 px-3 bg-purple-600 text-white text-xs rounded-lg">
+                    class="py-2 px-3 bg-violet-600 hover:bg-violet-700 text-white text-xs rounded-lg">
                     Explore
                 </RouterLink>
             </div>

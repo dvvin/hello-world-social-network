@@ -42,8 +42,22 @@ export default {
             }
 
             if (this.errors.length === 0) {
+                let formData = new FormData()
+                const fileInput = this.$refs.file as HTMLInputElement;
+
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    formData.append('avatar', fileInput.files[0]);
+                }
+
+                formData.append('name', this.form.name);
+                formData.append('email', this.form.email);
+
                 axios
-                    .post('http://127.0.0.1:8000/api/editprofile', this.form)
+                    .post('http://127.0.0.1:8000/api/editprofile', formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        }
+                    })
                     .then(response => {
                         if (response.data.message === 'Profile updated') {
                             this.toastStore.showToast('5000', `${response.data.message}`, 'bg-emerald-500')
@@ -89,29 +103,31 @@ export default {
                         <form v-on:submit.prevent="submitForm">
                             <div>
                                 <div class="text-sm font-bold text-gray-700 tracking-wide">
-                                    Email Address
+                                    Current Email: {{ userStore.user.email }}
                                 </div>
                                 <input v-model="form.email"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                                    type="" placeholder="Email">
+                                    type="" placeholder="New Email">
                             </div>
 
                             <div class="mt-8">
                                 <div class="flex justify-between items-center">
                                     <div class="text-sm font-bold text-gray-700 tracking-wide">
-                                        Username
+                                        Current Username: {{ userStore.user.name }}
                                     </div>
-                                    <!-- <div>
-                                        <a class="text-xs font-display font-semibold text-emerald-600 hover:text-emerald-700
-                                        cursor-pointer">
-                                            Forgot Password?
-                                        </a>
-                                    </div> -->
                                 </div>
                                 <input v-model="form.name"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                                    type="" placeholder="Username">
+                                    type="" placeholder="New Username">
+                            </div>
 
+                            <div class="mt-8">
+                                <div class="flex justify-between items-center">
+                                    <div class="text-sm font-bold text-gray-700 tracking-wide">
+                                        Add Photo
+                                    </div>
+                                </div>
+                                <input type="file" ref="file">
                             </div>
 
                             <template>

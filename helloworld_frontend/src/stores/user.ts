@@ -12,6 +12,7 @@ export const useUserStore = defineStore({
             email: null as string | null,
             access: null as string | null,
             refresh: null as string | null,
+            avatar: null as string | null,
         },
     }),
 
@@ -23,6 +24,7 @@ export const useUserStore = defineStore({
                 this.user.id = localStorage.getItem('user.id')
                 this.user.name = localStorage.getItem('user.name')
                 this.user.email = localStorage.getItem('user.email')
+                this.user.avatar = localStorage.getItem('user.avatar')
                 this.user.isAuthenticated = true
 
                 this.refreshToken()
@@ -45,18 +47,21 @@ export const useUserStore = defineStore({
             this.user.id = null
             this.user.name = null
             this.user.email = null
+            this.user.avatar = null
 
             localStorage.setItem('user.access', '')
             localStorage.setItem('user.refresh', '')
             localStorage.setItem('user.id', '')
             localStorage.setItem('user.name', '')
             localStorage.setItem('user.email', '')
+            localStorage.setItem('user.avatar', '')
         },
 
         setUserInfo(user: any) {
             this.user.id = user.id
             this.user.name = user.name
             this.user.email = user.email
+            this.user.avatar = user.avatar
 
             if (this.user.id !== null) {
                 localStorage.setItem('user.id', this.user.id)
@@ -68,6 +73,10 @@ export const useUserStore = defineStore({
 
             if (this.user.email !== null) {
                 localStorage.setItem('user.email', this.user.email)
+            }
+
+            if (this.user.avatar !== null) {
+                localStorage.setItem('user.avatar', this.user.avatar)
             }
         },
 
