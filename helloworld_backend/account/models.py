@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserM
 from django.db import models
 from django.utils import timezone
 
+
 class CustomUserManager(UserManager):
     def _create_user(self, name, email, password, **extra_fields):
         if not email:
@@ -25,12 +26,13 @@ class CustomUserManager(UserManager):
         extra_fields.setdefault("is_superuser", True)
         return self._create_user(name, email, password, **extra_fields)
 
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=255, blank=True, default="")
     avatar = models.ImageField(upload_to="avatars", blank=True, null=True)
-    friends = models.ManyToManyField('self')
+    friends = models.ManyToManyField("self")
     friends_count = models.IntegerField(default=0)
     posts_count = models.IntegerField(default=0)
 
@@ -49,24 +51,29 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_avatar(self):
         if self.avatar:
-            return 'http://127.0.0.1:8000' + self.avatar.url
+            return "http://127.0.0.1:8000" + self.avatar.url
 
         else:
-            return ''
+            return "http://127.0.0.1:8000/media/avatars/default.jpg"
+
 
 class FriendshipRequest(models.Model):
-    SENT = 'sent'
-    ACCEPTED = 'accepted'
-    REJECTED = 'rejected'
+    SENT = "sent"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
 
     STATUS_CHOICES = (
-        (SENT, 'Sent'),
-        (ACCEPTED, 'Accepted'),
-        (REJECTED, 'Rejected'),
+        (SENT, "Sent"),
+        (ACCEPTED, "Accepted"),
+        (REJECTED, "Rejected"),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_for = models.ForeignKey(User, related_name='received_friendshiprequests', on_delete=models.CASCADE)
+    created_for = models.ForeignKey(
+        User, related_name="received_friendshiprequests", on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='created_friendshiprequests', on_delete=models.CASCADE)
+    created_by = models.ForeignKey(
+        User, related_name="created_friendshiprequests", on_delete=models.CASCADE
+    )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=SENT)

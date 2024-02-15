@@ -48,13 +48,18 @@ export default {
                     .post('http://127.0.0.1:8000/api/signup', this.form)
                     .then(response => {
                         if (response.data.message === 'success') {
-                            this.toastStore.showToast('5000', 'The user is registered. Please log in', 'bg-emerald-500')
+                            this.toastStore.showToast('5000', 'The user is registered. Please check your e-mail for the activation link', 'bg-emerald-500')
 
                             this.form.email = ''
                             this.form.name = ''
                             this.form.password1 = ''
                             this.form.password2 = ''
                         } else {
+                            const data = JSON.parse(response.data.message)
+                            for (const key in data) {
+                                this.errors.push(data[key][0].message)
+                            }
+
                             this.toastStore.showToast('5000', 'Something went wrong. Please try again', 'bg-red-300')
                         }
                     })
@@ -134,13 +139,9 @@ export default {
 
                             </div>
 
-                            <template>
-                                <div v-if="errors">
-                                    <div class="bg-red-300 text-white rounded-lg p-6">
-                                        <p v-for="error in errors" v-bind:key="error">
-                                            {{ error }}
-                                        </p>
-                                    </div>
+                            <template v-if="errors.length > 0">
+                                <div class="mt-6 bg-red-300 text-white rounded-lg p-6">
+                                    <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
                                 </div>
                             </template>
 

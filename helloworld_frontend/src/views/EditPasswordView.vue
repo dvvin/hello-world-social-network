@@ -17,61 +17,50 @@ export default {
     data() {
         return {
             form: {
-                email: '',
-                name: ''
+                old_password: '',
+                new_password1: '',
+                new_password2: ''
             },
             errors: [] as string[],
         }
     },
 
-    created() {
-        this.form.email = this.userStore.user.email as string;
-        this.form.name = this.userStore.user.name as string;
-    },
+    // created() {
+    //     this.form.email = this.userStore.user.email as string;
+    //     this.form.name = this.userStore.user.name as string;
+    // },
 
     methods: {
         submitForm() {
             this.errors = []
 
-            if (this.form.email === '') {
-                this.errors.push('Your e-mail is missing')
-            }
-
-            if (this.form.name === '') {
-                this.errors.push('Your name is missing')
+            if (this.form.new_password1 !== this.form.new_password2) {
+                this.errors.push('The password does not match')
             }
 
             if (this.errors.length === 0) {
                 let formData = new FormData()
-                const fileInput = this.$refs.file as HTMLInputElement;
 
-                if (fileInput && fileInput.files && fileInput.files[0]) {
-                    formData.append('avatar', fileInput.files[0]);
-                }
-
-                formData.append('name', this.form.name);
-                formData.append('email', this.form.email);
+                formData.append('old_password', this.form.old_password);
+                formData.append('new_password1', this.form.new_password1);
+                formData.append('new_password2', this.form.new_password2);
 
                 axios
-                    .post('http://127.0.0.1:8000/api/editprofile', formData, {
+                    .post('http://127.0.0.1:8000/api/editpassword', formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         }
                     })
                     .then(response => {
-                        if (response.data.message === 'Profile updated') {
-                            this.toastStore.showToast('5000', `${response.data.message}`, 'bg-emerald-500')
+                        if (response.data.message === 'success') {
+                            this.toastStore.showToast('5000', 'Your password has been changed!', 'bg-emerald-500')
 
-                            this.userStore.setUserInfo({
-                                id: this.userStore.user.id,
-                                name: this.form.name,
-                                email: this.form.email,
-                                avatar: response.data.user.get_avatar
-                            })
-
-                            this.$router.back()
+                            this.$router.push(`/profile/${this.userStore.user.id}`)
                         } else {
-                            this.toastStore.showToast('5000', `${response.data.message}`, 'bg-red-300')
+                            const data = JSON.parse(response.data.message)
+                            for (const key in data) {
+                                this.errors.push(data[key][0].message)
+                            }
                         }
                     })
                     .catch(error => {
@@ -104,31 +93,33 @@ export default {
                         <form v-on:submit.prevent="submitForm">
                             <div>
                                 <div class="text-sm font-bold text-gray-700 tracking-wide">
-                                    Current Email: {{ userStore.user.email }}
+                                    Old password:
                                 </div>
-                                <input v-model="form.email"
+                                <input v-model="form.old_password"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                                    type="" placeholder="New Email">
+                                    type="password" placeholder="Old Password">
                             </div>
 
                             <div class="mt-8">
                                 <div class="flex justify-between items-center">
                                     <div class="text-sm font-bold text-gray-700 tracking-wide">
-                                        Current Username: {{ userStore.user.name }}
+                                        New password:
                                     </div>
                                 </div>
-                                <input v-model="form.name"
+                                <input v-model="form.new_password1"
                                     class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
-                                    type="" placeholder="New Username">
+                                    type="password" placeholder="New Password">
                             </div>
 
                             <div class="mt-8">
                                 <div class="flex justify-between items-center">
                                     <div class="text-sm font-bold text-gray-700 tracking-wide">
-                                        Add Photo
+                                        Repeat password:
                                     </div>
                                 </div>
-                                <input type="file" ref="file">
+                                <input v-model="form.new_password2"
+                                    class="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+                                    type="password" placeholder="Repeat Password">
                             </div>
 
                             <template v-if="errors.length > 0">
@@ -145,12 +136,6 @@ export default {
                                 </button>
                             </div>
                         </form>
-                        <div class="mt-8 text-sm font-display font-semibold text-gray-700 text-center">
-                            <RouterLink to="/profile/edit/password"
-                                class="cursor-pointer text-emerald-600 hover:text-emerald-800">
-                                Click here to edit your password!
-                            </RouterLink>
-                        </div>
                     </div>
                 </div>
             </div>

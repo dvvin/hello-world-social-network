@@ -42,8 +42,12 @@ export default {
                     })
                     .catch(error => {
                         console.log('error', error)
-                    })
 
+                        this.errors.push('Incorrect e-mail or password. Or the user has not been activated')
+                    })
+            }
+
+            if (this.errors.length === 0) {
                 await axios
                     .get('http://127.0.0.1:8000/api/me')
                     .then(response => {
@@ -100,13 +104,9 @@ export default {
                                     type="password" placeholder="Password">
                             </div>
 
-                            <template>
-                                <div v-if="errors">
-                                    <div class="bg-red-300 text-white rounded-lg p-6">
-                                        <p v-for="error in errors" v-bind:key="error">
-                                            {{ error }}
-                                        </p>
-                                    </div>
+                            <template v-if="errors.length > 0">
+                                <div class="mt-6 bg-red-300 text-white rounded-lg p-6">
+                                    <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
                                 </div>
                             </template>
 
