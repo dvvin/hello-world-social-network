@@ -39,3 +39,5 @@ db.sqlite3
 # Others
 .DS_Store
 *.swp
+
+media/

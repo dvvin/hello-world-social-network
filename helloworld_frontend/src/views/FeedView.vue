@@ -28,6 +28,7 @@ export default {
         return {
             posts: [] as Post[],
             body: '',
+            url: null as string | null
         }
     },
 
@@ -47,19 +48,41 @@ export default {
                 })
         },
 
+        onFileChange(e: any) {
+            const file = e.target.files[0];
+            this.url = URL.createObjectURL(file);
+        },
+
         submitForm() {
-            axios
-                .post('http://127.0.0.1:8000/api/posts/create/', {
-                    'body': this.body
-                })
-                .then(response => {
-                    this.posts.unshift(response.data)
-                    this.body = ''
-                })
-                .catch(error => {
-                    console.log('error', error)
-                })
+            let formData = new FormData();
+            const fileInput = this.$refs.file as HTMLInputElement;
+
+            const isFileSelected = fileInput && fileInput.files && fileInput.files[0];
+
+            if (this.body.trim() !== '' || isFileSelected) {
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    formData.append('image', fileInput.files[0]);
+                }
+
+                formData.append('body', this.body);
+
+                axios.post('http://127.0.0.1:8000/api/posts/create/', formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                }).then(response => {
+                    this.posts.unshift(response.data);
+                    this.body = '';
+                    if (fileInput) {
+                        fileInput.value = '';
+                    }
+                    this.url = null;
+                }).catch(error => {
+                    console.log('error', error);
+                });
+            }
         }
+
     }
 }
 </script>
@@ -84,16 +107,23 @@ export default {
                     <form v-on:submit.prevent="submitForm" method="post">
                         <div class="p-4">
                             <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
-                                placeholder="Say helloWorld!"></textarea>
+                                placeholder="Say helloWorld!">
+                            </textarea>
+
+                            <div id="preview" v-if="url">
+                                <img :src="url" class="w-[100px] mt-3 rounded-xl" />
+                            </div>
                         </div>
 
                         <div class="p-4 border-t border-gray-100 flex justify-between">
-                            <button :disabled="!body.trim()" class="inline-block px-4 py-2.5 mt-2 bg-violet-600 hover:bg-violet-700 focus:ring-4
-                        focus:outline-none focus:ring-violet-200 dark:focus:ring-violet-800 text-white rounded-lg">
+                            <label :disabled="!body.trim()"
+                                class="inline-block px-4 py-2.5 mt-2 bg-violet-600 hover:bg-violet-700 focus:ring-4
+                        dark:focus:ring-emerald-300focus:outline-none focus:ring-violet-200 dark:focus:ring-violet-800 text-white rounded-lg">
+                                <input type="file" ref="file" class="hidden" @change="onFileChange" />
                                 <i class="fa-solid fa-plus fa-lg"></i>
-                            </button>
+                            </label>
 
-                            <button :disabled="!body.trim()" type="submit" class="text-white bg-gradient-to-r from-violet-500
+                            <button type="submit" class="text-white bg-gradient-to-r from-violet-500
                              to-emerald-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-violet-200
                              dark:focus:ring-emerald-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2">
                                 <strong>Post</strong>
