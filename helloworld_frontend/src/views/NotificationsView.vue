@@ -20,7 +20,6 @@ export default {
                 .get('http://127.0.0.1:8000/api/notifications')
                 .then(response => {
                     console.log(response.data)
-
                     this.notifications = response.data
                 })
                 .catch(error => {
@@ -29,41 +28,38 @@ export default {
         },
 
         async readNotification(notification: any) {
-    console.log('readNotification', notification.id)
-
-    await axios
-        .post(`http://127.0.0.1:8000/api/notifications/read/${notification.id}/`)
-        .then(response => {
-            console.log(response.data)
-
-            if (notification.notification_type == 'postlike' || notification.notification_type == 'postcomment') {
-                // Ensure post_id is present
-                if (notification.post_id) {
-                    this.$router.push({name: 'postview', params: {id: notification.post_id}})
-                } else {
-                    console.error('Post ID missing for notification', notification.id);
-                }
-            } else {
-                // Assume created_by is the correct field for other notification types
-                // Make sure to replace 'created_by' with 'created_for_id' if your data structure has this field
-                if (notification.created_by) {
-                    this.$router.push({name: 'friends', params: {id: notification.created_for_id}})
-                } else {
-                    console.error('Created For ID missing for notification', notification.id);
-                }
-            }
-        })
-        .catch(error => {
-            console.log('Error: ', error)
-        })
-}
+            await axios
+                .post(`http://127.0.0.1:8000/api/notifications/read/${notification.id}/`)
+                .then(response => {
+                    if (notification.notification_type == 'postlike' || notification.notification_type == 'postcomment') {
+                        if (notification.post_id) {
+                            this.$router.push({ name: 'postview', params: { id: notification.post_id } })
+                        }
+                    } else {
+                        if (notification.created_by) {
+                            this.$router.push({ name: 'friends', params: { id: notification.created_for_id } })
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('Error: ', error)
+                })
+        }
 
     }
 }
 </script>
 
 <template>
-    <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin>
+        <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    </head>
+
+    <div class="font-m-plus-rounded-1c max-w-7xl mx-auto grid grid-cols-4 gap-4 pt-6">
         <div class="main-center col-span-3 space-y-4">
             <div class="p-4 bg-white border border-gray-200 rounded-lg" v-for="notification in notifications"
                 v-bind:key="notification.id" v-if="notifications.length">
@@ -73,7 +69,7 @@ export default {
             </div>
 
             <div class="p-4 bg-white border border-gray-200 rounded-lg" v-else>
-                You don't have any unread notifications!
+                There are no notifications
             </div>
         </div>
     </div>
