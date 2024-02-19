@@ -6,7 +6,7 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from account.models import User
+from account.models import User, FriendshipRequest
 from account.serializers import UserSerializer
 from notification.utils import create_notification
 
@@ -56,8 +56,29 @@ def post_list_profile(request, id):
     posts_serializer = PostSerializer(posts, many=True, context={"request": request})
     user_serializer = UserSerializer(user, context={"request": request})
 
+    friendship_request_status = False
+
+    if request.user in user.friends.all():
+        friendship_request_status = False
+
+    existing_request_sent = FriendshipRequest.objects.filter(
+        created_for=user, created_by=request.user
+    ).exists()
+
+    existing_request_received = FriendshipRequest.objects.filter(
+        created_for=request.user, created_by=user
+    ).exists()
+
+    if existing_request_sent or existing_request_received:
+        friendship_request_status = True
+
     return JsonResponse(
-        {"posts": posts_serializer.data, "user": user_serializer.data}, safe=False
+        {
+            "posts": posts_serializer.data,
+            "user": user_serializer.data,
+            "friendship_request_status": friendship_request_status,
+        },
+        safe=False,
     )
 
 
@@ -140,7 +161,6 @@ def post_create_comment(request, pk):
     post.save()
 
     notification = create_notification(request, "postcomment", post_id=post.id)
-
 
     serializer = CommentSerializer(comment)
 

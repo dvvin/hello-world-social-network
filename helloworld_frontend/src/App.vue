@@ -113,7 +113,7 @@ export default defineComponent({
         <div class="menu-right">
           <template v-if="userStore.user.isAuthenticated">
             <RouterLink :to="{ name: 'profile', params: { id: userStore.user.id } }">
-              <img :src="userStore.user.avatar ?? ''" class="w-12 rounded-full">
+              <img :src="userStore.user.avatar ?? ''" class="h-12 w-12 object-cover rounded-full">
             </RouterLink>
           </template>
 

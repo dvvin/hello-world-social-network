@@ -43,7 +43,8 @@ export default {
                 id: null
             } as any,
             body: '',
-            url: null as string | null
+            url: null as string | null,
+            friendship_request_status: null as boolean | null
         }
     },
 
@@ -71,6 +72,8 @@ export default {
             axios
                 .post(`http://127.0.0.1:8000/api/friends/${this.user.id}/request/`)
                 .then(response => {
+                    this.friendship_request_status = true
+
                     if (response.data.message == 'request already sent') {
                         this.toastStore.showToast('5000', 'The request has already been sent!', 'bg-red-300')
                     }
@@ -88,8 +91,10 @@ export default {
             axios
                 .get(`http://127.0.0.1:8000/api/posts/profile/${this.$route.params.id}/`)
                 .then(response => {
+                    console.log('response.data', response.data)
                     this.posts = response.data.posts
                     this.user = response.data.user
+                    this.friendship_request_status = response.data.friendship_request_status
                 })
                 .catch(error => {
                     console.log('error', error)
@@ -160,12 +165,12 @@ export default {
         <div class="max-w-7xl mx-auto grid grid-cols-4 gap-4">
             <div class="main-left col-span-1">
                 <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                    <img :src="user.get_avatar" class="mb-6 rounded-full">
+                    <img :src="user.get_avatar" class="ml-2 h-64 w-64 object-cover mb-6 rounded-full">
 
                     <p><strong>{{ user.name }}</strong></p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
-                        <button @click="sendFriendshipRequest" v-if="userStore.user.id !== user.id"
+                        <button @click="sendFriendshipRequest" v-if="userStore.user.id !== user.id && friendship_request_status === false"
                             class="inline-block mt-[-8px] py-2 px-2 bg-purple-600 text-xs text-white rounded-lg">
                             <i class="fa-solid fa-user-plus fa-lg"></i>
                         </button>
@@ -199,8 +204,6 @@ export default {
                         </RouterLink> -->
 
                     </div>
-
-
                 </div>
             </div>
 

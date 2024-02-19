@@ -38,7 +38,7 @@ export default {
         <div class="space-y-4">
             <div class="flex items-center justify-between" v-for="user in users" v-bind:key="user.id">
                 <div class="flex items-center space-x-2">
-                    <img :src="user.get_avatar" class="w-[40px] rounded-full">
+                    <img :src="user.get_avatar" class="h-[40px] w-[40px] object-cover rounded-full">
 
                     <p class="text-xs"><strong>{{ user.name }}</strong></p>
                 </div>

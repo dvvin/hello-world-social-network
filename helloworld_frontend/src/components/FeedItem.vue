@@ -73,7 +73,7 @@ export default {
     <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center space-x-6">
             <RouterLink :to="{ name: 'profile', params: { 'id': post.created_by.id } }">
-                <img :src="post.created_by.get_avatar" class="w-[40px] rounded-full">
+                <img :src="post.created_by.get_avatar" class="h-[40px] w-[40px] object-cover rounded-full">
             </RouterLink>
 
             <p>

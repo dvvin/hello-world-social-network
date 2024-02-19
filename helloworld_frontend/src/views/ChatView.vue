@@ -96,7 +96,7 @@ export default {
                             <template v-for="user in conversation.users" v-bind:key="user.id">
                                 <div v-if="user.id !== userStore.user.id">
                                     <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
-                                        <img :src="user.get_avatar" class="w-10 h-10 rounded-full">
+                                        <img :src="user.get_avatar" class="w-10 h-10 object-cover rounded-full">
                                     </RouterLink>
                                 </div>
                                 <p class="text-xs font-bold pl-3.5 " v-if="user.id !== userStore.user.id">{{ user.name }}</p>
@@ -125,7 +125,7 @@ export default {
                             </div>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                 <RouterLink :to="{ name: 'profile', params: { id: message.created_by.id } }">
-                                    <img :src="message.created_by.get_avatar" class="w-[40px] rounded-full">
+                                    <img :src="message.created_by.get_avatar" class="h-[40px] w-[40px] object-cover rounded-full">
                                 </RouterLink>
                             </div>
                         </div>
@@ -133,7 +133,7 @@ export default {
                         <div class="flex w-full mt-2 space-x-3 max-w-md" v-else>
                             <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-300">
                                 <RouterLink :to="{ name: 'profile', params: { id: message.created_by.id } }">
-                                    <img :src="message.created_by.get_avatar" class="w-[40px] rounded-full">
+                                    <img :src="message.created_by.get_avatar" class="h-[40px] w-[40px] object-cover rounded-full">
                                 </RouterLink>
                             </div>
                             <div>

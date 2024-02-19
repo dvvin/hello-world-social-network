@@ -102,7 +102,7 @@ export default {
     <div class="font-m-plus-rounded-1c pt-6 max-w-7xl mx-auto grid grid-cols-4 gap-4">
         <div class="main-left col-span-1">
             <div class="p-4 bg-white border border-gray-200 text-center rounded-lg">
-                <img :src="user.get_avatar" class="mb-6 rounded-full">
+                <img :src="user.get_avatar" class="ml-2 h-64 w-64 mb-6 object-cover rounded-full">
 
                 <p><strong>{{ user.name }}</strong></p>
 
@@ -120,7 +120,7 @@ export default {
                     <div class="p-4 text-center bg-gray-100 rounded-lg" v-for="friendshipRequest in friendshipRequests"
                         v-bind:key="friendshipRequest.id">
                         <RouterLink :to="{ name: 'profile', params: { id: friendshipRequest.created_by.id } }">
-                            <img :src="friendshipRequest.created_by.get_avatar" class="mb-6 mx-auto rounded-full">
+                            <img :src="friendshipRequest.created_by.get_avatar" class="mb-6 h-28 w-28 object-cover rounded-full">
                         </RouterLink>
 
                         <RouterLink :to="{ name: 'profile', params: { id: friendshipRequest.created_by.id } }">
@@ -159,7 +159,7 @@ export default {
                     <div class="block" v-for="user in friends" v-bind:key="user.id">
                         <div class="p-4 text-center bg-gray-100 rounded-lg">
                             <RouterLink :to="{ name: 'profile', params: { id: user.id } }">
-                                <img :src="user.get_avatar" class="mb-6 rounded-full mx-auto">
+                                <img :src="user.get_avatar" class="mb-6 h-28 w-28 object-cover rounded-full">
                             </RouterLink>
 
                             <RouterLink :to="{ name: 'profile', params: { id: user.id } }">

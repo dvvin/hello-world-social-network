@@ -136,7 +136,6 @@ export default {
                                         Add Photo
                                     </div>
                                 </div>
-                                <input type="file" ref="file">
                             </div>
 
                             <label
