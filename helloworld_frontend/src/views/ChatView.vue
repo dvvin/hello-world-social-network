@@ -32,7 +32,7 @@ export default {
         },
         getConversations() {
             axios
-                .get('http://127.0.0.1:8000/api/chat/')
+                .get('/api/chat/')
                 .then(response => {
                     this.conversations = response.data
 
@@ -49,7 +49,7 @@ export default {
 
         getMessages() {
             axios
-                .get(`http://127.0.0.1:8000/api/chat/${this.activeConversation}/`)
+                .get(`/api/chat/${this.activeConversation}/`)
                 .then(response => {
                     this.activeConversation = response.data
                 })
@@ -60,7 +60,7 @@ export default {
 
         submitForm() {
             axios
-                .post(`http://127.0.0.1:8000/api/chat/${this.activeConversation.id}/send/`, {
+                .post(`/api/chat/${this.activeConversation.id}/send/`, {
                     body: this.body
                 })
                 .then(response => {

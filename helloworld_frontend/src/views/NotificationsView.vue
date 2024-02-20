@@ -17,7 +17,7 @@ export default {
     methods: {
         getNotifications() {
             axios
-                .get('http://127.0.0.1:8000/api/notifications')
+                .get('/api/notifications')
                 .then(response => {
                     this.notifications = response.data
                 })
@@ -28,7 +28,7 @@ export default {
 
         async readNotification(notification: any) {
             await axios
-                .post(`http://127.0.0.1:8000/api/notifications/read/${notification.id}/`)
+                .post(`/api/notifications/read/${notification.id}/`)
                 .then(response => {
                     if (notification.notification_type == 'postlike' || notification.notification_type == 'postcomment') {
                         if (notification.post_id) {

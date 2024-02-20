@@ -14,9 +14,10 @@ SECRET_KEY = "django-insecure-#a8x3t(#=he#j@!1w9ba)&s(51k6c#o^^x5b4dt!3ge!e=exu%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.helloworld.com']
 
-WEBSITE_URL = "http://127.0.0.1:8000"
+WEBSITE_URL = "http://helloworld.com"
+
 
 # Application definition
 
@@ -38,11 +39,11 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
+    "http://helloworld.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173"
+    "http://helloworld.com"
 ]
 
 INSTALLED_APPS = [

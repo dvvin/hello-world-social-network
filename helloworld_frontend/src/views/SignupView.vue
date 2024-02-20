@@ -45,7 +45,7 @@ export default {
 
             if (this.errors.length === 0) {
                 axios
-                    .post('http://127.0.0.1:8000/api/signup', this.form)
+                    .post('/api/signup', this.form)
                     .then(response => {
                         if (response.data.message === 'success') {
                             this.toastStore.showToast('5000', 'The user is registered. Please check your e-mail for the activation link', 'bg-emerald-500')

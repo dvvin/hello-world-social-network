@@ -28,7 +28,7 @@ export default {
 
     methods: {
         likePost(id: string) {
-            axios.post(`http://127.0.0.1:8000/api/posts/${id}/like/`)
+            axios.post(`/api/posts/${id}/like/`)
                 .then(response => {
                     if (response.data.message === 'like created') {
                         this.post.likes_count += 1;
@@ -48,7 +48,7 @@ export default {
         },
 
         fetchLikes(id: string) {
-            axios.get(`http://127.0.0.1:8000/api/posts/${id}/likes/`)
+            axios.get(`/api/posts/${id}/likes/`)
                 .then(response => {
                     this.usersWhoLiked = response.data;
                     this.showLikesList = this.usersWhoLiked.length > 0;

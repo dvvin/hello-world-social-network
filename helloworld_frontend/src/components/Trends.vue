@@ -17,7 +17,7 @@ export default {
     methods: {
         getTrends() {
             axios
-                .get('http://127.0.0.1:8000/api/posts/trends/')
+                .get('/api/posts/trends/')
                 .then(response => {
                     this.trends = response.data
                 })

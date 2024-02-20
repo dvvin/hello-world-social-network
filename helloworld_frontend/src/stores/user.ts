@@ -81,7 +81,7 @@ export const useUserStore = defineStore({
         },
 
         refreshToken() {
-            axios.post('http://127.0.0.1:8000/api/refresh', {
+            axios.post('/api/refresh', {
                 refresh: this.user.refresh
             })
                 .then((response) => {

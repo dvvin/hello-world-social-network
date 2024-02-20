@@ -46,7 +46,7 @@ export default {
                 formData.append('new_password2', this.form.new_password2);
 
                 axios
-                    .post('http://127.0.0.1:8000/api/editpassword', formData, {
+                    .post('/api/editpassword', formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         }

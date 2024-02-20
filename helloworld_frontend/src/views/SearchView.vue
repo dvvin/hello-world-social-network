@@ -21,7 +21,7 @@ export default {
     methods: {
         submitForm() {
             axios
-                .post('http://127.0.0.1:8000/api/search/', {
+                .post('/api/search/', {
                     query: this.query
                 })
                 .then(response => {

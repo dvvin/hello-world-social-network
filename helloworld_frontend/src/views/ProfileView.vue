@@ -71,7 +71,7 @@ export default {
 
         sendFriendshipRequest() {
             axios
-                .post(`http://127.0.0.1:8000/api/friends/${this.user.id}/request/`)
+                .post(`/api/friends/${this.user.id}/request/`)
                 .then(response => {
                     this.friendship_request_status = true
 
@@ -90,9 +90,8 @@ export default {
 
         getFeed() {
             axios
-                .get(`http://127.0.0.1:8000/api/posts/profile/${this.$route.params.id}/`)
+                .get(`/api/posts/profile/${this.$route.params.id}/`)
                 .then(response => {
-                    console.log('response.data', response.data)
                     this.posts = response.data.posts
                     this.user = response.data.user
                     this.friendship_request_status = response.data.friendship_request_status
@@ -116,12 +115,11 @@ export default {
                 formData.append('body', this.body);
                 formData.append('is_private', this.is_private.toString());
 
-                axios.post('http://127.0.0.1:8000/api/posts/create/', formData, {
+                axios.post('/api/posts/create/', formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }
                 }).then(response => {
-                    console.log('response.data', response.data);
                     this.posts.unshift(response.data);
                     this.body = '';
                     if (fileInput) {
@@ -144,7 +142,7 @@ export default {
 
         sendDirectMessage() {
             axios
-                .get(`http://127.0.0.1:8000/api/chat/${this.$route.params.id}/get-or-create/`)
+                .get(`/api/chat/${this.$route.params.id}/get-or-create/`)
                 .then(response => {
                     this.$router.push('/chat')
                 })

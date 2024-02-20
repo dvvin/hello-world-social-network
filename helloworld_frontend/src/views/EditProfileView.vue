@@ -59,7 +59,7 @@ export default {
                 formData.append('email', this.form.email);
 
                 axios
-                    .post('http://127.0.0.1:8000/api/editprofile', formData, {
+                    .post('/api/editprofile', formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                         }

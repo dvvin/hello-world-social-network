@@ -39,7 +39,7 @@ export default {
     methods: {
         getFeed() {
             axios
-                .get('http://127.0.0.1:8000/api/posts/')
+                .get('/api/posts/')
                 .then(response => {
                     this.posts = response.data
                 })
@@ -66,7 +66,7 @@ export default {
 
                 formData.append('body', this.body);
 
-                axios.post('http://127.0.0.1:8000/api/posts/create/', formData, {
+                axios.post('/api/posts/create/', formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }

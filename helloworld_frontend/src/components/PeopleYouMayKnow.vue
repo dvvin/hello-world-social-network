@@ -15,7 +15,7 @@ export default {
     methods: {
         getFriendSuggestions() {
             axios
-                .get('http://127.0.0.1:8000/api/friends/suggested/')
+                .get('/api/friends/suggested/')
                 .then(response => {
                     this.users = response.data
                 })

@@ -57,7 +57,7 @@ export default {
     methods: {
         getFriends() {
             axios
-                .get(`http://127.0.0.1:8000/api/friends/${this.$route.params.id}/`)
+                .get(`/api/friends/${this.$route.params.id}/`)
                 .then(response => {
                     this.friendshipRequests = response.data.requests
                     this.friends = response.data.friends
@@ -70,7 +70,7 @@ export default {
 
         handleRequest(status: string, pk: number) {
             axios
-                .post(`http://127.0.0.1:8000/api/friends/${pk}/${status}/`)
+                .post(`/api/friends/${pk}/${status}/`)
                 .then(response => {
                     if (status === 'rejected') {
                         this.toastStore.showToast('5000', 'You rejected the request.', 'bg-red-300')

@@ -1,5 +1,5 @@
 import './assets/main.css'
-axios.defaults.baseURL = 'http://localhost:5173';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

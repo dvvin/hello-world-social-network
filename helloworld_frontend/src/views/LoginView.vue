@@ -34,7 +34,7 @@ export default {
 
             if (this.errors.length === 0) {
                 await axios
-                    .post('http://127.0.0.1:8000/api/login', this.form)
+                    .post('/api/login', this.form)
                     .then(response => {
                         this.userStore.setToken(response.data)
 
@@ -49,7 +49,7 @@ export default {
 
             if (this.errors.length === 0) {
                 await axios
-                    .get('http://127.0.0.1:8000/api/me')
+                    .get('/api/me')
                     .then(response => {
                         this.userStore.setUserInfo(response.data)
 

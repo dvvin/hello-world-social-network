@@ -33,7 +33,7 @@ export default {
     methods: {
         getPost() {
             axios
-                .get(`http://127.0.0.1:8000/api/posts/${this.$route.params.id}/`)
+                .get(`/api/posts/${this.$route.params.id}/`)
                 .then(response => {
                     this.post = response.data.post
                 })
@@ -44,7 +44,7 @@ export default {
 
         submitForm() {
             axios
-                .post(`http://127.0.0.1:8000/api/posts/${this.$route.params.id}/comment/`, {
+                .post(`/api/posts/${this.$route.params.id}/comment/`, {
                     'body': this.body
                 })
                 .then(response => {

@@ -42,7 +42,7 @@ export default defineComponent({
   methods: {
     getNotifications() {
       axios
-        .get('http://127.0.0.1:8000/api/notifications')
+        .get('/api/notifications')
         .then(response => {
           this.notifications = response.data
         })
@@ -68,7 +68,7 @@ export default defineComponent({
     <div class="max-w-7xl mx-auto">
       <div class="flex items-center justify-between">
 
-        <RouterLink :to="{ name: 'feed' }">
+        <RouterLink :to="{ name: 'home' }">
           <a href="#">
             <img src="/hw_logo_trans.png" alt="Logo" class="h-20">
           </a>

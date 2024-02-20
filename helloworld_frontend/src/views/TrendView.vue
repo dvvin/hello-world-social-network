@@ -36,7 +36,7 @@ export default {
     methods: {
         getFeed() {
             axios
-                .get(`http://127.0.0.1:8000/api/posts/?trend=${this.$route.params.id}`)
+                .get(`/api/posts/?trend=${this.$route.params.id}`)
                 .then(response => {
                     this.posts = response.data
                 })
