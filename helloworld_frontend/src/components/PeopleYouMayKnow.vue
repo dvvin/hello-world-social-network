@@ -17,8 +17,6 @@ export default {
             axios
                 .get('http://127.0.0.1:8000/api/friends/suggested/')
                 .then(response => {
-                    console.log("Suggesstions", response.data)
-
                     this.users = response.data
                 })
                 .catch(error => {

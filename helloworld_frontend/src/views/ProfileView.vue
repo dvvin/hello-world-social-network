@@ -44,7 +44,8 @@ export default {
             } as any,
             body: '',
             url: null as string | null,
-            friendship_request_status: null as boolean | null
+            friendship_request_status: null as boolean | null,
+            is_private: false
         }
     },
 
@@ -113,12 +114,14 @@ export default {
                 }
 
                 formData.append('body', this.body);
+                formData.append('is_private', this.is_private.toString());
 
                 axios.post('http://127.0.0.1:8000/api/posts/create/', formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     }
                 }).then(response => {
+                    console.log('response.data', response.data);
                     this.posts.unshift(response.data);
                     this.body = '';
                     if (fileInput) {
@@ -126,6 +129,7 @@ export default {
                     }
                     this.url = null;
                     this.user.posts_count += 1;
+                    this.is_private = false;
                 }).catch(error => {
                     console.log('error', error);
                 });
@@ -170,7 +174,8 @@ export default {
                     <p><strong>{{ user.name }}</strong></p>
 
                     <div class="mt-6 flex space-x-8 justify-around">
-                        <button @click="sendFriendshipRequest" v-if="userStore.user.id !== user.id && friendship_request_status === false"
+                        <button @click="sendFriendshipRequest"
+                            v-if="userStore.user.id !== user.id && friendship_request_status === false"
                             class="inline-block mt-[-8px] py-2 px-2 bg-purple-600 text-xs text-white rounded-lg">
                             <i class="fa-solid fa-user-plus fa-lg"></i>
                         </button>
@@ -214,6 +219,26 @@ export default {
                             <textarea v-model="body" class="p-4 w-full bg-gray-100 rounded-lg"
                                 placeholder="Say helloWorld!">
                             </textarea>
+
+                            <div class="inline-flex items-center">
+                                <label class="relative flex items-center p-3 rounded-full cursor-pointer" htmlFor="check">
+                                    <input type="checkbox" v-model="is_private"
+                                        class="before:content[''] peer relative h-5 w-5 cursor-pointer appearance-none rounded-md border border-blue-gray-200 transition-all before:absolute before:top-2/4 before:left-2/4 before:block before:h-12 before:w-12 before:-translate-y-2/4 before:-translate-x-2/4 before:rounded-full before:bg-blue-gray-500 before:opacity-0 before:transition-opacity checked:border-gray-900 checked:bg-gray-900 checked:before:bg-gray-900 hover:before:opacity-10"
+                                        id="check" />
+                                    <span
+                                        class="absolute text-white transition-opacity opacity-0 pointer-events-none top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 peer-checked:opacity-100">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 20 20"
+                                            fill="currentColor" stroke="currentColor" stroke-width="1">
+                                            <path fill-rule="evenodd"
+                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                    </span>
+                                </label>
+                                <label class="mt-px font-light text-gray-700 cursor-pointer select-none" htmlFor="check">
+                                    Private
+                                </label>
+                            </div>
 
                             <div id="preview" v-if="url">
                                 <img :src="url" class="w-[100px] mt-3 rounded-xl" />

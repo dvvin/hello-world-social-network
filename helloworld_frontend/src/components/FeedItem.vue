@@ -121,7 +121,12 @@ export default {
                     </path>
                 </svg>
 
-                <RouterLink :to="{name: 'postview', params: {id: post.id}}" class="text-gray-500 text-xs">{{ post.comments_count }} comments</RouterLink>
+                <RouterLink :to="{ name: 'postview', params: { id: post.id } }" class="text-gray-500 text-xs">{{
+                    post.comments_count }} comments</RouterLink>
+            </div>
+
+            <div v-if="post.is_private">
+                <i class="fa-regular fa-eye-slash"></i>
             </div>
         </div>
 

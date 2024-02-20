@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.db.models import Q
 from account.models import User
 from account.serializers import UserSerializer
 from post.models import Post
@@ -9,16 +10,23 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
+
 @api_view(["POST"])
 def search(request):
     data = request.data
     query = data["query"]
-    print('query: ', query)
+    user_ids = [request.user.id] + list(
+        request.user.friends.values_list("id", flat=True)
+    )
 
     users = User.objects.filter(name__icontains=query)
     users_serializer = UserSerializer(users, many=True)
 
-    posts = Post.objects.filter(body__icontains=query)
+    posts = Post.objects.filter(
+        Q(body__icontains=query, is_private=False)
+        | Q(created_by_id__in=list(user_ids), body__icontains=query)
+    )
+
     posts_serializer = PostSerializer(posts, many=True)
 
     return JsonResponse(

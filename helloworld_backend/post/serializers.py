@@ -27,6 +27,7 @@ class PostSerializer(serializers.ModelSerializer):
             "is_liked_by_user",
             "comments_count",
             "attachments",
+            "is_private",
         )
 
     def get_is_liked_by_user(self, obj):

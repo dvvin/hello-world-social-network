@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.db.models import Q
 
 from rest_framework.decorators import (
     api_view,
@@ -26,7 +27,14 @@ from django.utils import timezone
 
 @api_view(["GET"])
 def post_detail(request, pk):
-    post = Post.objects.get(pk=pk)
+    user_ids = [request.user.id] + list(
+        request.user.friends.values_list("id", flat=True)
+    )
+
+    post = Post.objects.filter(
+        Q(created_by_id__in=list(user_ids)) | Q(is_private=False)
+    ).get(pk=pk)
+
     context = {"request": request}
     return JsonResponse({"post": PostDetailSerializer(post, context=context).data})
 
@@ -42,7 +50,7 @@ def post_list(request):
 
     if trend:
         pattern = rf"(?:^| )#{trend}\b"
-        posts = posts.filter(body__iregex=pattern)
+        posts = posts.filter(body__iregex=pattern).filter(is_private=False)
 
     serializer = PostSerializer(posts, many=True, context={"request": request})
     return JsonResponse(serializer.data, safe=False)
@@ -52,6 +60,10 @@ def post_list(request):
 def post_list_profile(request, id):
     user = User.objects.get(pk=id)
     posts = Post.objects.filter(created_by_id=id)
+
+    if request.user.id != id:
+        if request.user not in user.friends.all():
+            posts = posts.filter(is_private=False)
 
     posts_serializer = PostSerializer(posts, many=True, context={"request": request})
     user_serializer = UserSerializer(user, context={"request": request})
@@ -185,7 +197,9 @@ def get_trends(request):
     this_hour = timezone.now().replace(minute=0, second=0, microsecond=0)
     twenty_four_hours = this_hour - timedelta(hours=24)
 
-    for post in Post.objects.filter(created_at__gte=twenty_four_hours):
+    for post in Post.objects.filter(created_at__gte=twenty_four_hours).filter(
+        is_private=False
+    ):
         extract_hashtags(post.body, trends)
 
     for trend in Counter(trends).most_common(5):
