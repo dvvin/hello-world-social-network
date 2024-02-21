@@ -50,6 +50,12 @@ export default defineComponent({
           console.log('error', error)
         })
     },
+
+    logout() {
+      this.userStore.removeToken()
+
+      this.$router.push('/login')
+    },
   }
 });
 </script>
@@ -112,9 +118,18 @@ export default defineComponent({
 
         <div class="menu-right">
           <template v-if="userStore.user.isAuthenticated">
-            <RouterLink :to="{ name: 'profile', params: { id: userStore.user.id } }">
-              <img :src="userStore.user.avatar ?? ''" class="h-12 w-12 object-cover rounded-full">
-            </RouterLink>
+            <div class="flex items-center">
+                <button @click="logout" type="button" class="mr-5 text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none
+        focus:ring-red-200 dark:focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                  <strong>
+                    Logout
+                  </strong>
+                </button>
+
+              <RouterLink :to="{ name: 'profile', params: { id: userStore.user.id } }">
+                <img :src="userStore.user.avatar ?? ''" class="h-12 w-12 object-cover rounded-full">
+              </RouterLink>
+            </div>
           </template>
 
           <template v-else>

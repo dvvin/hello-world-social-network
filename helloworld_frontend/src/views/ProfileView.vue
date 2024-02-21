@@ -45,7 +45,8 @@ export default {
             body: '',
             url: null as string | null,
             friendship_request_status: null as boolean | null,
-            is_private: false
+            is_private: false,
+            liked_posts_count: 0 as number
         }
     },
 
@@ -182,11 +183,6 @@ export default {
                             <i class="fa-solid fa-user-plus fa-lg"></i>
                         </button>
 
-                        <button @click="logout" v-if="userStore.user.id === user.id"
-                            class="inline-block mt-[-8px] py-2 px-2 bg-red-600 text-xs text-white rounded-lg">
-                            logout
-                        </button>
-
                         <RouterLink to="/profile/edit" v-if="userStore.user.id === user.id"
                             class="inline-block mt-[-8px] py-2 px-2 bg-violet-600 text-xs text-white rounded-lg">
                             edit
@@ -198,17 +194,16 @@ export default {
                         </button>
 
                         <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">
-                            {{ user.friends_count }} friends
+                            {{ user.friends_count }} {{ user.friends_count === 1 ? 'friend' : 'friends' }}
                         </RouterLink>
 
                         <p class="text-xs text-gray-500">
                             {{ user.posts_count }} {{ user.posts_count === 1 ? 'post' : 'posts' }}
                         </p>
 
-                        <!-- To implement later:
-                        <RouterLink :to="{ name: 'friends', params: { id: user.id } }" class="text-xs text-gray-500">
-                            {{ user.friends_count }} likes
-                        </RouterLink> -->
+                        <RouterLink :to="{ name: 'likes', params: { id: user.id } }" class="text-xs text-gray-500">
+                            {{ user.liked_posts_count }} {{ user.liked_posts_count === 1 ? 'like' : 'likes' }}
+                        </RouterLink>
 
                     </div>
                 </div>

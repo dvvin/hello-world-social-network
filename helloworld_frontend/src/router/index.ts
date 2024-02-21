@@ -5,6 +5,7 @@ import LoginView from '../views/LoginView.vue'
 import SearchView from '../views/SearchView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import FriendsView from '../views/FriendsView.vue'
+import LikesView from '../views/LikesView.vue'
 import PostView from '@/views/PostView.vue'
 import ChatView from '@/views/ChatView.vue'
 import TrendView from '@/views/TrendView.vue'
@@ -49,6 +50,11 @@ const router = createRouter({
       path: '/profile/:id/friends',
       name: 'friends',
       component: FriendsView
+    },
+    {
+      path: '/profile/:id/likes',
+      name: 'likes',
+      component: LikesView
     },
     {
       path: '/:id',

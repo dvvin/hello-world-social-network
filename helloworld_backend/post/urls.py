@@ -12,4 +12,6 @@ urlpatterns = [
     path("<uuid:pk>/likes/", api.post_likes, name="post_likes"),
     path("<uuid:pk>/comment/", api.post_create_comment, name="post_create_comment"),
     path("trends/", api.get_trends, name="get_trends"),
+
+    path("profile/<uuid:id>/likes/", api.get_liked_posts, name="get_liked_posts"),
 ]

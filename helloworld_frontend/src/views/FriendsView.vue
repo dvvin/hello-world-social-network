@@ -47,10 +47,9 @@ export default {
     },
 
     watch: {
-        // Watch for changes in $route.params.id
         '$route.params.id': {
-            immediate: true, // This ensures the watcher is triggered after the component is mounted
-            handler: 'getFriends', // Call getFriends method whenever the route parameter changes
+            immediate: true,
+            handler: 'getFriends'
         }
     },
 
@@ -59,6 +58,7 @@ export default {
             axios
                 .get(`/api/friends/${this.$route.params.id}/`)
                 .then(response => {
+                    console.log('friendsview:', response.data)
                     this.friendshipRequests = response.data.requests
                     this.friends = response.data.friends
                     this.user = response.data.user

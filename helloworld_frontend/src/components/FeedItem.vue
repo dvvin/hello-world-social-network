@@ -65,6 +65,7 @@ export default {
         fetchLikes(id: string) {
             axios.get(`/api/posts/${id}/likes/`)
                 .then(response => {
+                    console.log(response.data);
                     this.usersWhoLiked = response.data;
                     this.showLikesList = this.usersWhoLiked.length > 0;
                 })

@@ -223,3 +223,15 @@ def get_trends(request):
         Trend.objects.create(hashtag=trend[0], occurences=trend[1])
 
     return JsonResponse(serializer.data, safe=False)
+
+
+@api_view(["GET"])
+def get_liked_posts(request, id):
+    user = User.objects.get(pk=id)
+    liked_posts = Post.objects.filter(likes__created_by_id=id)
+    post_serializer = PostSerializer(liked_posts, many=True, context={"request": request})
+
+    return JsonResponse({
+        "posts": post_serializer.data,
+        "user": UserSerializer(user).data
+    }, safe=False)
