@@ -1,7 +1,19 @@
 <script lang="ts">
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
+import { useToastStore } from '@/stores/toast';
 
 export default {
+    setup() {
+        const userStore = useUserStore()
+        const toastStore = useToastStore()
+
+        return {
+            userStore,
+            toastStore
+        };
+    },
+
     props: {
         post: {
             type: Object,
@@ -14,11 +26,14 @@ export default {
         }
     },
 
+    emits: ['deletePost'],
+
     data() {
         return {
             isLiked: this.post.is_liked_by_user,
             showLikesList: false,
-            usersWhoLiked: [] as any
+            usersWhoLiked: [] as any,
+            showButton: false
         };
     },
 
@@ -57,6 +72,36 @@ export default {
                     console.log('Error fetching likes:', error);
                 });
         },
+
+        toggleButton() {
+            this.showButton = !this.showButton;
+        },
+
+        deletePost() {
+            this.$emit('deletePost', this.post.id);
+
+            axios
+                .delete(`/api/posts/${this.post.id}/delete/`)
+                .then(response => {
+                    this.toastStore.showToast('5000', 'The post has been deleted!', 'bg-red-300')
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+        },
+
+        reportPost() {
+            axios
+                .post(`/api/posts/${this.post.id}/report/`)
+                .then(response => {
+                    console.log(response.data);
+
+                    this.toastStore.showToast('5000', 'The post has been reported!', 'bg-emerald-300')
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
+        }
     }
 }
 </script>
@@ -131,12 +176,28 @@ export default {
         </div>
 
         <div>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12
+            <div @click="toggleButton">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12
                                 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z">
-                </path>
-            </svg>
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div v-if="showButton" class="">
+        <div class="flex space-x-6 items-center">
+            <div @click="deletePost" v-if="userStore.user.id === post.created_by.id" class="flex items-center space-x-2">
+                <i class="fa-regular fa-trash-can text-red-500"></i>
+                <span class="text-red-500 text-xs">Delete post</span>
+            </div>
+
+            <div @click="reportPost" class="flex items-center space-x-2">
+                <i class="fa-regular fa-flag"></i>
+                <span class="text-xs">Report post</span>
+            </div>
         </div>
     </div>
 </template>
