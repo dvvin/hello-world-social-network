@@ -34,8 +34,8 @@ export default {
         <h3 class="mb-6 text-xl">People you may know</h3>
 
         <div class="space-y-4">
-            <div class="flex items-center justify-between" v-for="user in users" v-bind:key="user.id">
-                <div class="flex items-center space-x-2">
+            <div class="flex items-center justify-between" v-for="user in users.slice(0, 3)" :key="user.id">
+    <div class="flex items-center space-x-2">
                     <img :src="user.get_avatar" class="h-[40px] w-[40px] object-cover rounded-full">
 
                     <p class="text-xs"><strong>{{ user.name }}</strong></p>
